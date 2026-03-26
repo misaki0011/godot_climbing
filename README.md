@@ -119,7 +119,7 @@ Current sound hook events:
 
 - The repository includes a GitHub Pages workflow at `.github/workflows/github-pages.yml`.
 - Pushing to the `main` branch, or running the workflow manually, exports the `Web` preset and deploys `build/web` to GitHub Pages over HTTPS.
-- In the GitHub repository settings, set `Pages` to deploy from `GitHub Actions` so the workflow is allowed to publish.
+- In the GitHub repository settings, set `Pages` to deploy from `GitHub Actions` if the workflow cannot enable Pages automatically on its first run.
 - After the workflow finishes, open the `github.io` Pages URL on desktop or phone to test the web build with HTTPS.
 
 ## Validation
