@@ -1,0 +1,6 @@
+.godot/
+build/
+
+# OS/editor clutter
+.DS_Store
+Thumbs.db

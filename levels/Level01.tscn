@@ -1,0 +1,98 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/BaseLevel.gd" id="1"]
+[ext_resource type="PackedScene" path="res://objects/MovingHazard.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://objects/Goal.tscn" id="3"]
+
+[node name="Level01" type="Node2D"]
+script = ExtResource("1")
+stage_name = "Level 1 - Tokyo Tower"
+camera_bounds = Rect2(0, -320, 1280, 3260)
+backdrop_texture_path = "res://assets/tokyotower_tp.png"
+goal_offset = Vector2(0, 20)
+
+[node name="TowerBackdrop" type="Sprite2D" parent="."]
+z_index = -32
+position = Vector2(640, 1310)
+scale = Vector2(1.55, 1.55)
+
+[node name="SpawnPoint" type="Marker2D" parent="."]
+position = Vector2(640, 2860)
+
+[node name="StartLabel" type="Label" parent="."]
+offset_left = 570.0
+offset_top = 2892.0
+offset_right = 710.0
+offset_bottom = 2928.0
+theme_override_colors/font_color = Color(0.44, 0.9, 0.62, 1)
+theme_override_font_sizes/font_size = 30
+text = "START"
+horizontal_alignment = 1
+
+[node name="Bird01" parent="." instance=ExtResource("2")]
+position = Vector2(220, 2060)
+travel_offset = Vector2(860, 0)
+speed = 250.0
+initial_progress = 0.16
+
+[node name="Bird02" parent="." instance=ExtResource("2")]
+position = Vector2(1040, 1930)
+travel_offset = Vector2(-820, 0)
+speed = 210.0
+initial_progress = 0.48
+
+[node name="Bird03" parent="." instance=ExtResource("2")]
+position = Vector2(180, 1790)
+travel_offset = Vector2(900, -90)
+speed = 235.0
+initial_progress = 0.7
+
+[node name="Bird04" parent="." instance=ExtResource("2")]
+position = Vector2(1060, 1655)
+travel_offset = Vector2(-860, 120)
+speed = 260.0
+initial_progress = 0.22
+
+[node name="Bird05" parent="." instance=ExtResource("2")]
+position = Vector2(240, 1510)
+travel_offset = Vector2(780, 0)
+speed = 220.0
+initial_progress = 0.4
+
+[node name="Bird06" parent="." instance=ExtResource("2")]
+position = Vector2(1030, 1365)
+travel_offset = Vector2(-860, -120)
+speed = 245.0
+initial_progress = 0.82
+
+[node name="Bird07" parent="." instance=ExtResource("2")]
+position = Vector2(160, 1215)
+travel_offset = Vector2(900, 0)
+speed = 270.0
+initial_progress = 0.28
+
+[node name="Bird08" parent="." instance=ExtResource("2")]
+position = Vector2(1050, 1040)
+travel_offset = Vector2(-840, 140)
+speed = 240.0
+initial_progress = 0.62
+
+[node name="Bird09" parent="." instance=ExtResource("2")]
+position = Vector2(200, 860)
+travel_offset = Vector2(900, 0)
+speed = 280.0
+initial_progress = 0.14
+
+[node name="Bird10" parent="." instance=ExtResource("2")]
+position = Vector2(1030, 680)
+travel_offset = Vector2(-820, -110)
+speed = 235.0
+initial_progress = 0.56
+
+[node name="Bird11" parent="." instance=ExtResource("2")]
+position = Vector2(180, 500)
+travel_offset = Vector2(880, 0)
+speed = 265.0
+initial_progress = 0.86
+
+[node name="Goal" parent="." instance=ExtResource("3")]
