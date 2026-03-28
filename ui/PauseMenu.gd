@@ -15,17 +15,17 @@ func _ready() -> void:
 func _apply_layout_scale() -> void:
 	var scale_factor: float = _get_mobile_scale()
 	var panel: Panel = $Panel
-	panel.custom_minimum_size = Vector2(360, 152) * scale_factor
+	panel.custom_minimum_size = Vector2(204, 152) * scale_factor
 	panel.offset_left = 24.0 * scale_factor
 	panel.offset_top = -396.0 * scale_factor
-	panel.offset_right = 384.0 * scale_factor
+	panel.offset_right = 228.0 * scale_factor
 	panel.offset_bottom = -170.0 * scale_factor
 
 	var box: VBoxContainer = $Panel/VBoxContainer
-	box.offset_left = 36.0 * scale_factor
-	box.offset_top = 28.0 * scale_factor
-	box.offset_right = 324.0 * scale_factor
-	box.offset_bottom = 122.0 * scale_factor
+	box.offset_left = 0.0
+	box.offset_top = 0.0
+	box.offset_right = 0.0
+	box.offset_bottom = 0.0
 	box.add_theme_constant_override("separation", int(round(10 * scale_factor)))
 
 	$Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(28 * scale_factor)))
@@ -36,8 +36,8 @@ func _apply_layout_scale() -> void:
 		"Panel/VBoxContainer/LevelSelectButton",
 	]:
 		var button: Button = get_node(button_path) as Button
-		button.custom_minimum_size = Vector2(0, 56) * scale_factor
-		button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+		button.custom_minimum_size = Vector2(204, 62) * scale_factor
+		button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
 		_apply_button_style(button, scale_factor, "secondary")
 
 
@@ -54,7 +54,7 @@ func _get_mobile_scale() -> float:
 	var base_scale: float = maxf(1.0, maxf(width_scale, height_scale))
 	if height > width:
 		base_scale *= 1.25
-	return clampf(base_scale, 1.0, 4.5)
+	return clampf(base_scale * 2.0, 2.0, 9.0)
 
 
 func _apply_button_style(button: Button, scale_factor: float, role: String) -> void:

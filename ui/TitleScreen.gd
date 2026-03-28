@@ -12,7 +12,7 @@ func _ready() -> void:
 
 
 func _apply_layout_scale() -> void:
-	var scale_factor: float = _get_mobile_scale() * 2.0
+	var scale_factor: float = _get_mobile_scale()
 	var panel: Panel = $CenterContainer/Panel
 	panel.custom_minimum_size = Vector2(420, 280) * scale_factor
 
@@ -53,7 +53,7 @@ func _get_mobile_scale() -> float:
 	var base_scale: float = maxf(1.0, maxf(width_scale, height_scale))
 	if height > width:
 		base_scale *= 1.25
-	return clampf(base_scale, 1.0, 4.5)
+	return clampf(base_scale * 2.0, 2.0, 9.0)
 
 
 func _apply_button_style(button: Button, scale_factor: float, role: String) -> void:

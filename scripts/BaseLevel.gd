@@ -5,6 +5,8 @@ class_name BaseLevel
 @export var camera_bounds := Rect2(0, 0, 1280, 720)
 @export_file("*.svg", "*.png", "*.webp") var backdrop_texture_path := ""
 @export var goal_offset := Vector2.ZERO
+@export var hud_safe_zone_height := 960.0
+@export var hud_safe_zone_width := 420.0
 
 
 func _ready() -> void:
@@ -36,6 +38,7 @@ func _apply_backdrop_texture() -> void:
 	backdrop.texture = texture
 	_align_backdrop_to_ground(backdrop)
 	_apply_level_alignment_offset(backdrop.position - original_backdrop_position)
+	_apply_hud_safe_zone()
 	_extend_camera_to_backdrop_top(backdrop)
 	_align_goal_to_backdrop(backdrop)
 
@@ -82,6 +85,29 @@ func _extend_camera_to_backdrop_top(backdrop: Sprite2D) -> void:
 	var camera_bottom := camera_bounds.position.y + camera_bounds.size.y
 	camera_bounds.position.y = desired_camera_top
 	camera_bounds.size.y = camera_bottom - camera_bounds.position.y
+
+
+func _apply_hud_safe_zone() -> void:
+	if hud_safe_zone_height <= 0.0:
+		return
+
+	var spawn_position := get_spawn_position()
+	var minimum_hazard_y := spawn_position.y - hud_safe_zone_height
+	for child in get_children():
+		if child.name == "Goal":
+			continue
+		if not child is Area2D:
+			continue
+		if not child.has_method("apply_alignment_offset"):
+			continue
+		if child.position.x > hud_safe_zone_width:
+			continue
+		if child.position.y <= minimum_hazard_y:
+			continue
+		var safe_offset := Vector2(0, minimum_hazard_y - child.position.y)
+		child.position += safe_offset
+		if child.has_method("apply_alignment_offset"):
+			child.apply_alignment_offset(safe_offset)
 
 
 func _align_goal_to_backdrop(backdrop: Sprite2D) -> void:

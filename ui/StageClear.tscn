@@ -40,95 +40,101 @@ grow_vertical = 2
 [node name="Panel" type="Panel" parent="CenterContainer"]
 custom_minimum_size = Vector2(400, 380)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel"]
+[node name="MarginContainer" type="MarginContainer" parent="CenterContainer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 32
+
+[node name="InnerCenter" type="CenterContainer" parent="CenterContainer/Panel/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel/MarginContainer/InnerCenter"]
+custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 theme_override_constants/separation = 12
-offset_left = 32.0
-offset_top = 24.0
-offset_right = 368.0
-offset_bottom = 348.0
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 28
 text = "Stage Clear"
 horizontal_alignment = 1
 
-[node name="RewardLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="RewardLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 22
 text = "Reward: 0.0 gems"
 horizontal_alignment = 1
 
-[node name="BreakdownDivider" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="BreakdownDivider" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 18
 text = "--"
 horizontal_alignment = 1
 
-[node name="ClearRow" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="BreakdownGrid" type="GridContainer" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 layout_mode = 2
+columns = 2
 theme_override_constants/separation = 12
 
-[node name="ClearValueLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/ClearRow"]
+[node name="ClearValueLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid"]
 layout_mode = 2
-size_flags_horizontal = 3
+custom_minimum_size = Vector2(190, 0)
 theme_override_font_sizes/font_size = 18
 text = "Clear"
 
-[node name="ClearRewardLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/ClearRow"]
+[node name="ClearRewardLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid"]
 layout_mode = 2
-custom_minimum_size = Vector2(78, 0)
+custom_minimum_size = Vector2(64, 0)
 theme_override_font_sizes/font_size = 18
 text = "+1.0"
 horizontal_alignment = 2
 
-[node name="DeathsRow" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="DeathsPenaltyLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid"]
 layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="DeathsPenaltyLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/DeathsRow"]
-layout_mode = 2
-size_flags_horizontal = 3
+custom_minimum_size = Vector2(190, 0)
 theme_override_font_sizes/font_size = 18
 text = "Deaths x0"
 
-[node name="DeathsPenaltyValueLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/DeathsRow"]
+[node name="DeathsPenaltyValueLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid"]
 layout_mode = 2
-custom_minimum_size = Vector2(78, 0)
+custom_minimum_size = Vector2(64, 0)
 theme_override_font_sizes/font_size = 18
 text = "-0.0"
 horizontal_alignment = 2
 
-[node name="TimeRow" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="TimeBonusLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid"]
 layout_mode = 2
-theme_override_constants/separation = 12
-
-[node name="TimeBonusLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/TimeRow"]
-layout_mode = 2
-size_flags_horizontal = 3
+custom_minimum_size = Vector2(190, 0)
 theme_override_font_sizes/font_size = 18
 text = "Time 00:00/00:00"
 
-[node name="TimeBonusValueLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/TimeRow"]
+[node name="TimeBonusValueLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid"]
 layout_mode = 2
-custom_minimum_size = Vector2(78, 0)
+custom_minimum_size = Vector2(64, 0)
 theme_override_font_sizes/font_size = 18
 text = "+0.0"
 horizontal_alignment = 2
 
-[node name="NextButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="NextButton" type="Button" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 layout_mode = 2
 text = "Next"
 
-[node name="RetryButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="RetryButton" type="Button" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 layout_mode = 2
 text = "Restart"
 
-[node name="BackGap" type="Control" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="BackGap" type="Control" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 
-[node name="BackButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="BackButton" type="Button" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 layout_mode = 2
 text = "Back"

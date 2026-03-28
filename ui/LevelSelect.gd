@@ -11,10 +11,10 @@ const UNLOCKED_GEM_COLOR := Color(0.95, 0.95, 0.97, 1.0)
 
 
 func _ready() -> void:
-	$CenterContainer/Panel/VBoxContainer/Level1Row/Level1Button.pressed.connect(func() -> void: level_selected.emit(0))
-	$CenterContainer/Panel/VBoxContainer/Level2Row/Level2Button.pressed.connect(func() -> void: level_selected.emit(1))
-	$CenterContainer/Panel/VBoxContainer/Level3Row/Level3Button.pressed.connect(func() -> void: level_selected.emit(2))
-	$CenterContainer/Panel/VBoxContainer/BackButton.pressed.connect(func() -> void: back_pressed.emit())
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level1Row/Level1Button.pressed.connect(func() -> void: level_selected.emit(0))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level2Row/Level2Button.pressed.connect(func() -> void: level_selected.emit(1))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level3Row/Level3Button.pressed.connect(func() -> void: level_selected.emit(2))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BackButton.pressed.connect(func() -> void: back_pressed.emit())
 	get_viewport().size_changed.connect(_apply_layout_scale)
 	_apply_pending_data()
 	_apply_layout_scale()
@@ -48,29 +48,41 @@ func _apply_pending_data() -> void:
 
 
 func _apply_layout_scale() -> void:
-	var scale_factor: float = _get_mobile_scale() * 2.0
+	var scale_factor: float = _get_mobile_scale()
+	var window_size: Vector2 = Vector2(get_window().size)
+	var outer_margin := 24.0 * scale_factor
+	var desired_panel_size := Vector2(560, 620) * scale_factor
+	var panel_size := Vector2(
+		minf(desired_panel_size.x, maxf(280.0 * scale_factor, window_size.x - outer_margin * 2.0)),
+		minf(desired_panel_size.y, maxf(360.0 * scale_factor, window_size.y - outer_margin * 2.0))
+	)
 	var panel: Panel = $CenterContainer/Panel
-	panel.custom_minimum_size = Vector2(560, 620) * scale_factor
+	panel.custom_minimum_size = panel_size
+	var margin: MarginContainer = $CenterContainer/Panel/MarginContainer
+	var horizontal_padding := minf(48.0 * scale_factor, panel_size.x * 0.1)
+	var top_padding := minf(28.0 * scale_factor, panel_size.y * 0.06)
+	var bottom_padding := minf(32.0 * scale_factor, panel_size.y * 0.05)
+	margin.add_theme_constant_override("margin_left", int(round(horizontal_padding)))
+	margin.add_theme_constant_override("margin_top", int(round(top_padding)))
+	margin.add_theme_constant_override("margin_right", int(round(horizontal_padding)))
+	margin.add_theme_constant_override("margin_bottom", int(round(bottom_padding)))
 
-	var box: VBoxContainer = $CenterContainer/Panel/VBoxContainer
-	box.offset_left = 40.0 * scale_factor
-	box.offset_top = 28.0 * scale_factor
-	box.offset_right = 520.0 * scale_factor
-	box.offset_bottom = 588.0 * scale_factor
+	var box: VBoxContainer = $CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer
+	box.custom_minimum_size = Vector2(maxf(320.0 * scale_factor, minf(panel_size.x - horizontal_padding * 2.0, 440.0 * scale_factor)), 0.0)
 	box.add_theme_constant_override("separation", int(round(12 * scale_factor)))
 
-	$CenterContainer/Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(32 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/TotalGemRow.add_theme_constant_override("separation", int(round(8 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/TotalGemRow/TotalGemLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/TotalGemRow/TotalGemColonLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/TotalGemRow/TotalGemValueLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/TotalGemRow/TotalGemIcon.custom_minimum_size = Vector2(24, 24) * scale_factor
-	$CenterContainer/Panel/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, 22) * scale_factor
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(32 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TotalGemRow.add_theme_constant_override("separation", int(round(8 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TotalGemRow/TotalGemLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TotalGemRow/TotalGemColonLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TotalGemRow/TotalGemValueLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TotalGemRow/TotalGemIcon.custom_minimum_size = Vector2(24, 24) * scale_factor
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, 22) * scale_factor
 
 	for button_path in [
-		"CenterContainer/Panel/VBoxContainer/Level1Row/Level1Button",
-		"CenterContainer/Panel/VBoxContainer/Level2Row/Level2Button",
-		"CenterContainer/Panel/VBoxContainer/Level3Row/Level3Button",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level1Row/Level1Button",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level2Row/Level2Button",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level3Row/Level3Button",
 	]:
 		var button: Button = get_node(button_path) as Button
 		button.custom_minimum_size = Vector2(0, 74) * scale_factor
@@ -78,8 +90,8 @@ func _apply_layout_scale() -> void:
 		_apply_button_style(button, scale_factor, "primary")
 
 	for button_path in [
-		"CenterContainer/Panel/VBoxContainer/Level4Row/Level4Button",
-		"CenterContainer/Panel/VBoxContainer/BackButton",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level4Row/Level4Button",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BackButton",
 	]:
 		var button: Button = get_node(button_path) as Button
 		button.custom_minimum_size = Vector2(0, 74) * scale_factor
@@ -87,10 +99,10 @@ func _apply_layout_scale() -> void:
 		_apply_button_style(button, scale_factor, "secondary")
 
 	for label_path in [
-		"CenterContainer/Panel/VBoxContainer/Level1Row/Level1RewardLabel",
-		"CenterContainer/Panel/VBoxContainer/Level2Row/Level2RewardLabel",
-		"CenterContainer/Panel/VBoxContainer/Level3Row/Level3RewardLabel",
-		"CenterContainer/Panel/VBoxContainer/Level4Row/Level4RewardLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level1Row/Level1RewardLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level2Row/Level2RewardLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level3Row/Level3RewardLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level4Row/Level4RewardLabel",
 	]:
 		var label: Label = get_node(label_path) as Label
 		label.custom_minimum_size = Vector2(56, 0) * scale_factor
@@ -98,16 +110,16 @@ func _apply_layout_scale() -> void:
 
 
 func _apply_unlocked_levels() -> void:
-	$CenterContainer/Panel/VBoxContainer/Level1Row/Level1Button.disabled = pending_unlocked_levels < 1
-	$CenterContainer/Panel/VBoxContainer/Level2Row/Level2Button.disabled = pending_unlocked_levels < 2
-	$CenterContainer/Panel/VBoxContainer/Level3Row/Level3Button.disabled = pending_unlocked_levels < 3
-	$CenterContainer/Panel/VBoxContainer/Level4Row/Level4Button.disabled = true
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level1Row/Level1Button.disabled = pending_unlocked_levels < 1
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level2Row/Level2Button.disabled = pending_unlocked_levels < 2
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level3Row/Level3Button.disabled = pending_unlocked_levels < 3
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level4Row/Level4Button.disabled = true
 
 	var reward_labels := [
-		$CenterContainer/Panel/VBoxContainer/Level1Row/Level1RewardLabel,
-		$CenterContainer/Panel/VBoxContainer/Level2Row/Level2RewardLabel,
-		$CenterContainer/Panel/VBoxContainer/Level3Row/Level3RewardLabel,
-		$CenterContainer/Panel/VBoxContainer/Level4Row/Level4RewardLabel,
+		$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level1Row/Level1RewardLabel,
+		$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level2Row/Level2RewardLabel,
+		$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level3Row/Level3RewardLabel,
+		$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level4Row/Level4RewardLabel,
 	]
 	for level_index in reward_labels.size():
 		var reward_label: Label = reward_labels[level_index]
@@ -118,15 +130,15 @@ func _apply_unlocked_levels() -> void:
 
 
 func _apply_total_gems() -> void:
-	$CenterContainer/Panel/VBoxContainer/TotalGemRow/TotalGemValueLabel.text = "%.1f" % pending_total_gems
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TotalGemRow/TotalGemValueLabel.text = "%.1f" % pending_total_gems
 
 
 func _apply_level_rewards() -> void:
 	var reward_labels := [
-		$CenterContainer/Panel/VBoxContainer/Level1Row/Level1RewardLabel,
-		$CenterContainer/Panel/VBoxContainer/Level2Row/Level2RewardLabel,
-		$CenterContainer/Panel/VBoxContainer/Level3Row/Level3RewardLabel,
-		$CenterContainer/Panel/VBoxContainer/Level4Row/Level4RewardLabel,
+		$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level1Row/Level1RewardLabel,
+		$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level2Row/Level2RewardLabel,
+		$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level3Row/Level3RewardLabel,
+		$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/Level4Row/Level4RewardLabel,
 	]
 	for level_index in reward_labels.size():
 		if level_index >= 3:
@@ -151,7 +163,7 @@ func _get_mobile_scale() -> float:
 	var base_scale: float = maxf(1.0, maxf(width_scale, height_scale))
 	if height > width:
 		base_scale *= 1.25
-	return clampf(base_scale, 1.0, 4.5)
+	return clampf(base_scale * 2.0, 2.0, 9.0)
 
 
 func _apply_button_style(button: Button, scale_factor: float, role: String) -> void:

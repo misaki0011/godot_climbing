@@ -7,9 +7,9 @@ signal back_pressed
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	$CenterContainer/Panel/VBoxContainer/NextButton.pressed.connect(func() -> void: next_pressed.emit())
-	$CenterContainer/Panel/VBoxContainer/RetryButton.pressed.connect(func() -> void: retry_pressed.emit())
-	$CenterContainer/Panel/VBoxContainer/BackButton.pressed.connect(func() -> void: back_pressed.emit())
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/NextButton.pressed.connect(func() -> void: next_pressed.emit())
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/RetryButton.pressed.connect(func() -> void: retry_pressed.emit())
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BackButton.pressed.connect(func() -> void: back_pressed.emit())
 	get_viewport().size_changed.connect(_apply_layout_scale)
 	_apply_layout_scale()
 
@@ -25,62 +25,77 @@ func set_results(
 	death_penalty: float,
 	speed_bonus: float
 ) -> void:
-	$CenterContainer/Panel/VBoxContainer/TitleLabel.text = "Tower Cleared" if is_final_level else "%s Clear" % stage_name
-	$CenterContainer/Panel/VBoxContainer/RewardLabel.text = "Reward: %.1f gems" % stage_reward
-	$CenterContainer/Panel/VBoxContainer/ClearRow/ClearRewardLabel.text = "+%.1f" % clear_reward
-	$CenterContainer/Panel/VBoxContainer/DeathsRow/DeathsPenaltyLabel.text = "Deaths x%d" % deaths
-	$CenterContainer/Panel/VBoxContainer/DeathsRow/DeathsPenaltyValueLabel.text = "-%.1f" % death_penalty
-	$CenterContainer/Panel/VBoxContainer/TimeRow/TimeBonusLabel.text = "Time %s/%s" % [time_text, target_time_text]
-	$CenterContainer/Panel/VBoxContainer/TimeRow/TimeBonusValueLabel.text = "+%.1f" % speed_bonus
-	$CenterContainer/Panel/VBoxContainer/NextButton.disabled = is_final_level
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TitleLabel.text = "Tower Cleared" if is_final_level else "%s Clear" % stage_name
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/RewardLabel.text = "Reward: %.1f gems" % stage_reward
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/ClearRewardLabel.text = "+%.1f" % clear_reward
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyLabel.text = "Deaths x%d" % deaths
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyValueLabel.text = "-%.1f" % death_penalty
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusLabel.text = "Time %s/%s" % [time_text, target_time_text]
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusValueLabel.text = "+%.1f" % speed_bonus
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/NextButton.disabled = is_final_level
 
 
 func _apply_layout_scale() -> void:
-	var scale_factor: float = _get_mobile_scale() * 2.0
+	var scale_factor: float = _get_mobile_scale()
+	var window_size: Vector2 = Vector2(get_window().size)
+	var outer_margin := 24.0 * scale_factor
+	var desired_panel_size := Vector2(400, 380) * scale_factor
+	var panel_size := Vector2(
+		minf(desired_panel_size.x, maxf(260.0 * scale_factor, window_size.x - outer_margin * 2.0)),
+		minf(desired_panel_size.y, maxf(280.0 * scale_factor, window_size.y - outer_margin * 2.0))
+	)
 	var panel: Panel = $CenterContainer/Panel
-	panel.custom_minimum_size = Vector2(400, 380) * scale_factor
+	panel.custom_minimum_size = panel_size
+	var margin: MarginContainer = $CenterContainer/Panel/MarginContainer
+	var horizontal_padding := minf(40.0 * scale_factor, panel_size.x * 0.1)
+	var top_padding := minf(24.0 * scale_factor, panel_size.y * 0.06)
+	var bottom_padding := minf(32.0 * scale_factor, panel_size.y * 0.08)
+	margin.add_theme_constant_override("margin_left", int(round(horizontal_padding)))
+	margin.add_theme_constant_override("margin_top", int(round(top_padding)))
+	margin.add_theme_constant_override("margin_right", int(round(horizontal_padding)))
+	margin.add_theme_constant_override("margin_bottom", int(round(bottom_padding)))
 
-	var box: VBoxContainer = $CenterContainer/Panel/VBoxContainer
-	box.offset_left = 32.0 * scale_factor
-	box.offset_top = 24.0 * scale_factor
-	box.offset_right = 368.0 * scale_factor
-	box.offset_bottom = 348.0 * scale_factor
+	var box: VBoxContainer = $CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer
+	box.custom_minimum_size = Vector2(maxf(220.0 * scale_factor, minf(panel_size.x - horizontal_padding * 2.0, 280.0 * scale_factor)), 0.0)
 	box.add_theme_constant_override("separation", int(round(12 * scale_factor)))
 
-	$CenterContainer/Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(28 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/RewardLabel.add_theme_font_size_override("font_size", int(round(22 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/BreakdownDivider.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, 18) * scale_factor
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(28 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/RewardLabel.add_theme_font_size_override("font_size", int(round(22 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownDivider.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, 18) * scale_factor
 
-	for row_path in [
-		"CenterContainer/Panel/VBoxContainer/ClearRow",
-		"CenterContainer/Panel/VBoxContainer/DeathsRow",
-		"CenterContainer/Panel/VBoxContainer/TimeRow",
-	]:
-		var row: HBoxContainer = get_node(row_path) as HBoxContainer
-		row.add_theme_constant_override("separation", int(round(12 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid.add_theme_constant_override("h_separation", int(round(12 * scale_factor)))
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid.add_theme_constant_override("v_separation", int(round(8 * scale_factor)))
 
 	for label_path in [
-		"CenterContainer/Panel/VBoxContainer/ClearRow/ClearValueLabel",
-		"CenterContainer/Panel/VBoxContainer/ClearRow/ClearRewardLabel",
-		"CenterContainer/Panel/VBoxContainer/DeathsRow/DeathsPenaltyLabel",
-		"CenterContainer/Panel/VBoxContainer/DeathsRow/DeathsPenaltyValueLabel",
-		"CenterContainer/Panel/VBoxContainer/TimeRow/TimeBonusLabel",
-		"CenterContainer/Panel/VBoxContainer/TimeRow/TimeBonusValueLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/ClearValueLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/ClearRewardLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyValueLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusValueLabel",
 	]:
 		var label: Label = get_node(label_path) as Label
 		label.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
 
+	for left_label_path in [
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/ClearValueLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusLabel",
+	]:
+		var left_label: Label = get_node(left_label_path) as Label
+		left_label.custom_minimum_size = Vector2(190, 0) * scale_factor
+
 	for value_label_path in [
-		"CenterContainer/Panel/VBoxContainer/ClearRow/ClearRewardLabel",
-		"CenterContainer/Panel/VBoxContainer/DeathsRow/DeathsPenaltyValueLabel",
-		"CenterContainer/Panel/VBoxContainer/TimeRow/TimeBonusValueLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/ClearRewardLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyValueLabel",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusValueLabel",
 	]:
 		var value_label: Label = get_node(value_label_path) as Label
-		value_label.custom_minimum_size = Vector2(78, 0) * scale_factor
+		value_label.custom_minimum_size = Vector2(64, 0) * scale_factor
 
 	for button_path in [
-		"CenterContainer/Panel/VBoxContainer/NextButton",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/NextButton",
 	]:
 		var button: Button = get_node(button_path) as Button
 		button.custom_minimum_size = Vector2(0, 58) * scale_factor
@@ -88,8 +103,8 @@ func _apply_layout_scale() -> void:
 		_apply_button_style(button, scale_factor, "primary")
 
 	for button_path in [
-		"CenterContainer/Panel/VBoxContainer/RetryButton",
-		"CenterContainer/Panel/VBoxContainer/BackButton",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/RetryButton",
+		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BackButton",
 	]:
 		var button: Button = get_node(button_path) as Button
 		button.custom_minimum_size = Vector2(0, 58) * scale_factor
@@ -110,7 +125,7 @@ func _get_mobile_scale() -> float:
 	var base_scale: float = maxf(1.0, maxf(width_scale, height_scale))
 	if height > width:
 		base_scale *= 1.25
-	return clampf(base_scale, 1.0, 4.5)
+	return clampf(base_scale * 2.0, 2.0, 9.0)
 
 
 func _apply_button_style(button: Button, scale_factor: float, role: String) -> void:

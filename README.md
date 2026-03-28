@@ -14,6 +14,7 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - The player does not walk or jump sideways during gameplay.
 - Moving hazards sweep horizontally or diagonally across the ladder path at different heights.
 - Touching any hazard increments deaths and respawns the player at the base quickly.
+- Moving hazards do not start inside the lower-left HUD-safe zone near the `PAUSE` / `RESUME` control, so gameplay objects stay clearer around that button.
 - Touching the goal at the top ends the stage and transitions away from gameplay to a separate stage clear page.
 - The stage clear page shows the stage name, gem reward, and a compact three-line reward breakdown for `Clear`, `Deaths xN`, and `Time current/target`.
 - The stage clear page always shows `Next`, `Restart`, and `Back` in that order, and unavailable actions are disabled instead of being hidden or renamed.
@@ -27,9 +28,12 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - The title, level selection, result, and pause screens use extra spacing between primary actions and secondary exit actions so the button groups read more clearly.
 - The pause and result screens use short labels like `Restart` and `Back` for faster recognition on phones.
 - Buttons now use a consistent role-based color system: bright blue for forward actions like `Start`, `Next`, and level buttons; muted blue-gray for `Restart`, `Back`, `Quit`, and `PAUSE` / `RESUME`; a flatter dark disabled style for unavailable actions; and a separate debug color for `DEBUG SKIP`.
+- Menu panels and their inner content are centered on screen, and the component layout stays centered as screens get narrower instead of drifting toward one side.
 - The level selection screen shows a right-aligned total-gem row with a gem icon plus a per-stage gem value in a simple two-column list without target times.
 - The level selection screen also shows `Level 4 - Coming Soon` as a visible non-playable row so the next stage is visible before it is implemented.
 - Menus and HUD controls use portrait-first scaling so phone screens stay readable while landscape gets a roomier version of the same layout.
+- Menus and HUD now share one unified mobile scaling rule instead of per-screen multiplier tweaks, so button sizes stay consistent across screens.
+- Selection and result panels clamp to the available screen width so their contents stay centered and do not spill off-screen on narrow mobile viewports.
 - The camera follows the ascent up tower-themed backdrops loaded from `assets/tokyotower_tp.png`, `assets/skytree_tp.png`, and `assets/burj_khalifa_tp.png`.
 - The player character is a back-view climbing ninja-cat that alternates between two climb frames instead of a plain placeholder block.
 
@@ -111,10 +115,12 @@ Design rules for future stages:
 - The tower backdrops are shown with imported texture resources from `assets/tokyotower_tp.png`, `assets/skytree_tp.png`, and `assets/burj_khalifa_tp.png`
 - `Level01`, `Level02`, and `Level03` keep the backdrop presentation simple without extra sky/glow layers
 - The HUD shows enlarged stage info, current time, target time, and `PAUSE` / `DEBUG SKIP` buttons while climb input comes from tapping or clicking the gameplay screen
+- Hazard placement keeps a small lower-left safe band clear around the pause control so buttons do not compete visually with flying obstacles
 - The title, level select, result, and pause menus use oversized panels plus brighter rounded buttons for mobile-friendly readability, with the pause menu anchored near the bottom-left HUD controls
 - Those menu screens also separate primary action groups from `Back`, `Quit`, or other leave-screen actions with a larger vertical gap
 - The pause and result actions favor shorter labels like `Restart` and `Back`
 - Button colors now communicate role consistently across the game: primary progression, secondary utility/navigation, disabled/unavailable, and debug-only actions
+- Menu components are centered inside their panels so narrow mobile screens keep the same centered structure instead of shifting content to one side
 - Menus and HUD text/buttons use a portrait-first layout that expands naturally in landscape
 - The player is rendered as a back-view climbing ninja-cat using two alternating PNG climb frames while hazards and markers remain simple placeholder shapes
 - Flying hazards cross the ladder lane to create readable timing windows

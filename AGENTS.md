@@ -47,6 +47,7 @@ When changing menus or HUD buttons, keep the current UI language consistent:
 
 - Prefer short labels such as `Next`, `Restart`, and `Back`.
 - Use larger spacing between primary action groups and exit-style actions such as `Back` or `Quit`.
+- Keep menu panels and their inner components centered on screen, and preserve that centered structure on narrow mobile screens instead of letting content drift to one side.
 - Keep button colors role-based across every page:
   - Primary: forward progression actions like `Start`, `Next`, and playable level buttons
   - Secondary: utility or navigation actions like `Restart`, `Back`, `Quit`, and `PAUSE` / `RESUME`
