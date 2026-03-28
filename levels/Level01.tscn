@@ -14,20 +14,10 @@ goal_offset = Vector2(0, 20)
 [node name="TowerBackdrop" type="Sprite2D" parent="."]
 z_index = -32
 position = Vector2(640, 1310)
-scale = Vector2(1.55, 1.55)
+scale = Vector2(1.0, 1.0)
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(640, 2860)
-
-[node name="StartLabel" type="Label" parent="."]
-offset_left = 570.0
-offset_top = 2892.0
-offset_right = 710.0
-offset_bottom = 2928.0
-theme_override_colors/font_color = Color(0.44, 0.9, 0.62, 1)
-theme_override_font_sizes/font_size = 30
-text = "START"
-horizontal_alignment = 1
 
 [node name="Bird01" parent="." instance=ExtResource("2")]
 position = Vector2(220, 2060)

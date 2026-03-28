@@ -25,82 +25,39 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Time: 00:00.00"
 
+[node name="TargetLabel" type="Label" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Target: 00:00.00"
+
 [node name="DeathsLabel" type="Label" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "Deaths: 0"
 
-[node name="TouchControls" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-
-[node name="LeftControls" type="MarginContainer" parent="TouchControls"]
+[node name="DebugSkipButton" type="Button" parent="."]
 layout_mode = 1
-anchors_preset = 3
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = -108.0
-offset_right = -1076.0
-offset_bottom = -16.0
-grow_vertical = 0
-mouse_filter = 2
-
-[node name="RestartButton" type="Button" parent="TouchControls/LeftControls"]
-custom_minimum_size = Vector2(188, 92)
-layout_mode = 2
-theme_override_font_sizes/font_size = 24
-text = "RETRY"
-
-[node name="RightControls" type="MarginContainer" parent="TouchControls"]
-layout_mode = 1
-anchors_preset = 12
+anchors_preset = 1
 anchor_left = 1.0
-anchor_top = 1.0
 anchor_right = 1.0
+offset_left = -228.0
+offset_top = 20.0
+offset_right = -24.0
+offset_bottom = 82.0
+grow_horizontal = 0
+text = "DEBUG SKIP"
+
+[node name="PauseButton" type="Button" parent="."]
+layout_mode = 1
+anchors_preset = 0
+anchor_left = 0.0
+anchor_right = 0.0
+anchor_top = 1.0
 anchor_bottom = 1.0
-offset_left = -276.0
-offset_top = -206.0
-offset_right = -16.0
-offset_bottom = -16.0
+offset_left = 24.0
+offset_top = -150.0
+offset_right = 228.0
+offset_bottom = -88.0
 grow_horizontal = 0
 grow_vertical = 0
-mouse_filter = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="TouchControls/RightControls"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="PauseButton" type="Button" parent="TouchControls/RightControls/VBoxContainer"]
-custom_minimum_size = Vector2(260, 76)
-layout_mode = 2
-theme_override_font_sizes/font_size = 22
 text = "PAUSE"
-
-[node name="ClimbButton" type="Button" parent="TouchControls/RightControls/VBoxContainer"]
-custom_minimum_size = Vector2(260, 120)
-layout_mode = 2
-theme_override_font_sizes/font_size = 34
-text = "CLIMB"
-
-[node name="DebugPanel" type="Panel" parent="."]
-visible = false
-offset_left = 12.0
-offset_top = 150.0
-offset_right = 300.0
-offset_bottom = 250.0
-
-[node name="DebugLabel" type="Label" parent="DebugPanel"]
-layout_mode = 0
-offset_left = 10.0
-offset_top = 10.0
-offset_right = 278.0
-offset_bottom = 88.0
-theme_override_font_sizes/font_size = 14
-text = "debug"

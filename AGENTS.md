@@ -41,6 +41,18 @@ If any of these change, update `README.md`:
 
 The documentation must match the final implementation.
 
+## UI Consistency
+
+When changing menus or HUD buttons, keep the current UI language consistent:
+
+- Prefer short labels such as `Next`, `Restart`, and `Back`.
+- Use larger spacing between primary action groups and exit-style actions such as `Back` or `Quit`.
+- Keep button colors role-based across every page:
+  - Primary: forward progression actions like `Start`, `Next`, and playable level buttons
+  - Secondary: utility or navigation actions like `Restart`, `Back`, `Quit`, and `PAUSE` / `RESUME`
+  - Disabled: clearly unavailable actions and coming-soon entries
+  - Debug: testing-only actions like `DEBUG SKIP`
+
 ## Output Format
 
 At the end of each task provide:

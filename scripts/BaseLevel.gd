@@ -31,9 +31,57 @@ func _apply_backdrop_texture() -> void:
 	if backdrop == null:
 		return
 
+	var original_backdrop_position := backdrop.position
 	var texture := _load_backdrop_texture(backdrop_texture_path)
 	backdrop.texture = texture
+	_align_backdrop_to_ground(backdrop)
+	_apply_level_alignment_offset(backdrop.position - original_backdrop_position)
+	_extend_camera_to_backdrop_top(backdrop)
 	_align_goal_to_backdrop(backdrop)
+
+
+func _align_backdrop_to_ground(backdrop: Sprite2D) -> void:
+	if backdrop.texture == null:
+		return
+
+	var spawn_position := get_spawn_position()
+	var texture_size := backdrop.texture.get_size()
+	var half_height := texture_size.y * absf(backdrop.scale.y) * 0.5
+	backdrop.position = Vector2(spawn_position.x, spawn_position.y - half_height)
+
+
+func _apply_level_alignment_offset(alignment_offset: Vector2) -> void:
+	if alignment_offset.is_zero_approx():
+		return
+
+	for child in get_children():
+		if child.name in ["TowerBackdrop", "SpawnPoint", "Goal"]:
+			continue
+		if child is Node2D:
+			child.position += alignment_offset
+		if child.has_method("apply_alignment_offset"):
+			child.apply_alignment_offset(alignment_offset)
+
+	var camera_bottom := camera_bounds.position.y + camera_bounds.size.y
+	camera_bounds.position.y += alignment_offset.y
+	camera_bounds.size.y = camera_bottom - camera_bounds.position.y
+
+
+func _extend_camera_to_backdrop_top(backdrop: Sprite2D) -> void:
+	if backdrop.texture == null:
+		return
+
+	var texture_size := backdrop.texture.get_size()
+	var half_height := texture_size.y * absf(backdrop.scale.y) * 0.5
+	var backdrop_top := backdrop.position.y - half_height
+	var top_padding := 96.0
+	var desired_camera_top := backdrop_top - top_padding
+	if desired_camera_top >= camera_bounds.position.y:
+		return
+
+	var camera_bottom := camera_bounds.position.y + camera_bounds.size.y
+	camera_bounds.position.y = desired_camera_top
+	camera_bounds.size.y = camera_bottom - camera_bounds.position.y
 
 
 func _align_goal_to_backdrop(backdrop: Sprite2D) -> void:

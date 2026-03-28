@@ -37,3 +37,8 @@ func _on_body_entered(body: Node) -> void:
 	var level_manager := get_tree().get_first_node_in_group("level_manager")
 	if level_manager:
 		level_manager.kill_player()
+
+
+func apply_alignment_offset(alignment_offset: Vector2) -> void:
+	start_position += alignment_offset
+	position = start_position.lerp(start_position + travel_offset, progress)

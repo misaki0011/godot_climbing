@@ -12,7 +12,7 @@ func _ready() -> void:
 
 
 func _apply_layout_scale() -> void:
-	var scale_factor: float = _get_mobile_scale()
+	var scale_factor: float = _get_mobile_scale() * 2.0
 	var panel: Panel = $CenterContainer/Panel
 	panel.custom_minimum_size = Vector2(420, 280) * scale_factor
 
@@ -24,14 +24,20 @@ func _apply_layout_scale() -> void:
 	$CenterContainer/Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(42 * scale_factor)))
 	$CenterContainer/Panel/VBoxContainer/SubtitleLabel.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
 	$CenterContainer/Panel/VBoxContainer/Spacer.custom_minimum_size = Vector2(0, 20) * scale_factor
+	$CenterContainer/Panel/VBoxContainer/QuitGap.custom_minimum_size = Vector2(0, 18) * scale_factor
 
 	for button_path in [
 		"CenterContainer/Panel/VBoxContainer/StartButton",
-		"CenterContainer/Panel/VBoxContainer/QuitButton",
 	]:
 		var button: Button = get_node(button_path) as Button
 		button.custom_minimum_size = Vector2(0, 54) * scale_factor
 		button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+		_apply_button_style(button, scale_factor, "primary")
+
+	var quit_button: Button = $CenterContainer/Panel/VBoxContainer/QuitButton
+	quit_button.custom_minimum_size = Vector2(0, 54) * scale_factor
+	quit_button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	_apply_button_style(quit_button, scale_factor, "secondary")
 
 
 func _get_mobile_scale() -> float:
@@ -48,3 +54,46 @@ func _get_mobile_scale() -> float:
 	if height > width:
 		base_scale *= 1.25
 	return clampf(base_scale, 1.0, 4.5)
+
+
+func _apply_button_style(button: Button, scale_factor: float, role: String) -> void:
+	var corner_radius := int(round(16 * scale_factor))
+	var border_width := int(round(maxf(2.0, 2.0 * scale_factor)))
+
+	var normal := StyleBoxFlat.new()
+	var hover_color := Color(0.4, 0.52, 0.72, 1.0)
+	var pressed_color := Color(0.27, 0.38, 0.55, 1.0)
+	match role:
+		"secondary":
+			normal.bg_color = Color(0.22, 0.28, 0.36, 1.0)
+			normal.border_color = Color(0.43, 0.54, 0.66, 1.0)
+			hover_color = Color(0.28, 0.35, 0.45, 1.0)
+			pressed_color = Color(0.18, 0.24, 0.31, 1.0)
+		_:
+			normal.bg_color = Color(0.34, 0.45, 0.62, 1.0)
+			normal.border_color = Color(0.62, 0.75, 0.95, 1.0)
+	normal.set_corner_radius_all(corner_radius)
+	normal.set_border_width_all(border_width)
+	normal.content_margin_left = 18 * scale_factor
+	normal.content_margin_right = 18 * scale_factor
+	normal.content_margin_top = 12 * scale_factor
+	normal.content_margin_bottom = 12 * scale_factor
+
+	var hover := normal.duplicate()
+	hover.bg_color = hover_color
+
+	var pressed := normal.duplicate()
+	pressed.bg_color = pressed_color
+
+	var disabled := normal.duplicate()
+	disabled.bg_color = Color(0.14, 0.16, 0.19, 0.9)
+	disabled.border_color = Color(0.24, 0.27, 0.31, 0.95)
+
+	button.add_theme_stylebox_override("normal", normal)
+	button.add_theme_stylebox_override("hover", hover)
+	button.add_theme_stylebox_override("pressed", pressed)
+	button.add_theme_stylebox_override("disabled", disabled)
+	button.add_theme_color_override("font_color", Color(1, 1, 1, 1))
+	button.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
+	button.add_theme_color_override("font_pressed_color", Color(1, 1, 1, 1))
+	button.add_theme_color_override("font_disabled_color", Color(0.46, 0.49, 0.54, 1.0))

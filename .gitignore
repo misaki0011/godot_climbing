@@ -4,3 +4,5 @@ build/
 # OS/editor clutter
 .DS_Store
 Thumbs.db
+
+AGENTS.md

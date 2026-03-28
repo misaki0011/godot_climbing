@@ -14,20 +14,10 @@ goal_offset = Vector2(0, 20)
 [node name="TowerBackdrop" type="Sprite2D" parent="."]
 z_index = -32
 position = Vector2(640, 1260)
-scale = Vector2(0.76, 0.76)
+scale = Vector2(1.0, 1.0)
 
 [node name="SpawnPoint" type="Marker2D" parent="."]
 position = Vector2(640, 2860)
-
-[node name="StartLabel" type="Label" parent="."]
-offset_left = 570.0
-offset_top = 2892.0
-offset_right = 710.0
-offset_bottom = 2928.0
-theme_override_colors/font_color = Color(0.58, 0.85, 1, 1)
-theme_override_font_sizes/font_size = 30
-text = "START"
-horizontal_alignment = 1
 
 [node name="Bird01" parent="." instance=ExtResource("2")]
 position = Vector2(190, 2260)
@@ -78,25 +68,25 @@ speed = 320.0
 initial_progress = 0.58
 
 [node name="Bird09" parent="." instance=ExtResource("2")]
-position = Vector2(180, 930)
+position = Vector2(180, 620)
 travel_offset = Vector2(900, 130)
 speed = 350.0
 initial_progress = 0.1
 
 [node name="Bird10" parent="." instance=ExtResource("2")]
-position = Vector2(1070, 740)
+position = Vector2(1070, 300)
 travel_offset = Vector2(-900, 0)
 speed = 315.0
 initial_progress = 0.42
 
 [node name="Bird11" parent="." instance=ExtResource("2")]
-position = Vector2(190, 540)
+position = Vector2(190, -80)
 travel_offset = Vector2(910, -120)
 speed = 340.0
 initial_progress = 0.72
 
 [node name="Bird12" parent="." instance=ExtResource("2")]
-position = Vector2(1050, 330)
+position = Vector2(1050, -480)
 travel_offset = Vector2(-860, 100)
 speed = 325.0
 initial_progress = 0.3

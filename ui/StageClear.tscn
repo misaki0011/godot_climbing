@@ -38,7 +38,7 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="Panel" parent="CenterContainer"]
-custom_minimum_size = Vector2(400, 330)
+custom_minimum_size = Vector2(400, 380)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel"]
 layout_mode = 2
@@ -46,7 +46,7 @@ theme_override_constants/separation = 12
 offset_left = 32.0
 offset_top = 24.0
 offset_right = 368.0
-offset_bottom = 298.0
+offset_bottom = 348.0
 
 [node name="TitleLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
 layout_mode = 2
@@ -54,22 +54,81 @@ theme_override_font_sizes/font_size = 28
 text = "Stage Clear"
 horizontal_alignment = 1
 
-[node name="TimeLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="RewardLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Time: 00:00.00"
+theme_override_font_sizes/font_size = 22
+text = "Reward: 0.0 gems"
 horizontal_alignment = 1
 
-[node name="DeathsLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="BreakdownDivider" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 20
-text = "Deaths: 0"
+theme_override_font_sizes/font_size = 18
+text = "--"
 horizontal_alignment = 1
 
-[node name="RetryButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="ClearRow" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
 layout_mode = 2
-text = "Play Again"
+theme_override_constants/separation = 12
+
+[node name="ClearValueLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/ClearRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Clear"
+
+[node name="ClearRewardLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/ClearRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(78, 0)
+theme_override_font_sizes/font_size = 18
+text = "+1.0"
+horizontal_alignment = 2
+
+[node name="DeathsRow" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="DeathsPenaltyLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/DeathsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Deaths x0"
+
+[node name="DeathsPenaltyValueLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/DeathsRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(78, 0)
+theme_override_font_sizes/font_size = 18
+text = "-0.0"
+horizontal_alignment = 2
+
+[node name="TimeRow" type="HBoxContainer" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="TimeBonusLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/TimeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = "Time 00:00/00:00"
+
+[node name="TimeBonusValueLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer/TimeRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(78, 0)
+theme_override_font_sizes/font_size = 18
+text = "+0.0"
+horizontal_alignment = 2
 
 [node name="NextButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
 layout_mode = 2
-text = "Back to Select"
+text = "Next"
+
+[node name="RetryButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Restart"
+
+[node name="BackGap" type="Control" parent="CenterContainer/Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+text = "Back"
