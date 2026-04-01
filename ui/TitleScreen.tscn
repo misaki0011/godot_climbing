@@ -29,40 +29,67 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Panel" type="Panel" parent="CenterContainer"]
-custom_minimum_size = Vector2(420, 280)
+custom_minimum_size = Vector2(580, 820)
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer/Panel"]
 layout_mode = 2
 theme_override_constants/separation = 14
-offset_left = 40.0
-offset_top = 32.0
-offset_right = 380.0
-offset_bottom = 248.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 572.0
+offset_bottom = 812.0
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="ArtCenter" type="CenterContainer" parent="CenterContainer/Panel/VBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 42
-text = "LADDER RUSH"
-horizontal_alignment = 1
+mouse_filter = 2
 
-[node name="SubtitleLabel" type="Label" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="TitleArtRect" type="TextureRect" parent="CenterContainer/Panel/VBoxContainer/ArtCenter"]
+custom_minimum_size = Vector2(420, 620)
 layout_mode = 2
-theme_override_font_sizes/font_size = 18
-text = "Climb the tower one Space press at a time"
-horizontal_alignment = 1
+expand_mode = 1
+stretch_mode = 5
+mouse_filter = 2
 
 [node name="Spacer" type="Control" parent="CenterContainer/Panel/VBoxContainer"]
-custom_minimum_size = Vector2(0, 20)
+custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
+mouse_filter = 2
 
-[node name="StartButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="ButtonArea" type="MarginContainer" parent="CenterContainer/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 64
+theme_override_constants/margin_right = 64
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="ButtonsVBox" type="VBoxContainer" parent="CenterContainer/Panel/VBoxContainer/ButtonArea"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="StartButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox"]
 layout_mode = 2
 text = "Start"
 
-[node name="QuitGap" type="Control" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="HowToPlayButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox"]
+layout_mode = 2
+text = "How To Play"
+
+[node name="QuitGap" type="Control" parent="CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox"]
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
 
-[node name="QuitButton" type="Button" parent="CenterContainer/Panel/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox"]
 layout_mode = 2
 text = "Quit"
+
+[node name="MusicButton" type="Button" parent="CenterContainer/Panel"]
+layout_mode = 0
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -70.0
+offset_top = 12.0
+offset_right = -12.0
+offset_bottom = 70.0
+z_index = 10
+focus_mode = 0
+tooltip_text = "Toggle music"

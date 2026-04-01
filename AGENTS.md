@@ -48,11 +48,13 @@ When changing menus or HUD buttons, keep the current UI language consistent:
 - Prefer short labels such as `Next`, `Restart`, and `Back`.
 - Use larger spacing between primary action groups and exit-style actions such as `Back` or `Quit`.
 - Keep menu panels and their inner components centered on screen, and preserve that centered structure on narrow mobile screens instead of letting content drift to one side.
-- Keep button colors role-based across every page:
-  - Primary: forward progression actions like `Start`, `Next`, and playable level buttons
-  - Secondary: utility or navigation actions like `Restart`, `Back`, `Quit`, and `PAUSE` / `RESUME`
-  - Disabled: clearly unavailable actions and coming-soon entries
-  - Debug: testing-only actions like `DEBUG SKIP`
+- Keep the `How To Play` screen short and visual. Describe the game in one short line, then explain how to play it, and finally add an illustration of the controls. Focus only on the core game loop, and keep the layout centered and easy to scan on mobile.
+- Assign every button exactly one base role. Button color should follow that base role across every page:
+  - Primary: forward progression actions such as `Start`, `Next`, and playable level buttons
+  - Exit: go-back or end-flow actions such as `Back` and `Quit`
+  - Utility: non-forward supporting actions such as `How To Play`, `Restart`, `PAUSE`, and `RESUME`
+  - Debug: testing-only actions such as `DEBUG SKIP`
+- Treat `Disabled` as a state, not a base role. It should override the base-role color with the unavailable/disabled style whenever that action cannot be used.
 
 ## Output Format
 

@@ -1,16 +1,28 @@
-# Obby2D
+# Ninja Cat Tower
 
 Godot 4 2D single-player tower-climb timing game where the player climbs a single tall ladder with `Space` while avoiding crossing airborne obstacles.
+
+## Overview
+
+- `Ninja Cat Tower` is a simple one-ladder climbing game for PC and mobile web.
+- Climb upward one step at a time while flying hazards sweep across the tower.
+- Reach the gem at the top as fast as you can with as few deaths as possible.
+- Clear stages based on Tokyo Tower, Skytree, and Burj Khalifa.
+- Earn gems from each stage through clear reward, low deaths, and target-time bonus.
 
 ## Current Behavior
 
 - Boot opens the title screen.
+- The title screen includes `Start`, `How To Play`, and `Quit`.
+- The title screen now uses a simple stacked layout where the `Ninja Cat Tower` title artwork sits centered in the upper area with very little surrounding padding, while the buttons sit in a narrower padded lower area and a small music icon toggle stays inset from the upper-right edge on narrow screens.
+- `How To Play` opens a short instruction screen with two simple gameplay lines plus a control illustration for phone tap and PC `Space`.
 - `Start` opens a stage select screen for `Level01`, `Level02`, and `Level03`.
 - `Level01` is a Tokyo Tower climb, `Level02` is a Skytree climb, and `Level03` is a Burj Khalifa climb.
 - Each level spawns the player at the base of one central ladder and starts the stage timer.
 - Each tower backdrop is anchored so its bottom touches the spawn ground line at original scale, the stage hazards shift with that tower alignment, the camera top extends high enough to show the full tower, and each goal is anchored to the top of its tower image.
 - During gameplay, the HUD shows both the current timer and the stage target time so players can compare their pace live.
 - Pressing `Space` moves the player upward by one fixed ladder step.
+- On desktop, `Space` stays dedicated to climbing and does not toggle HUD buttons even after they are clicked.
 - The player does not walk or jump sideways during gameplay.
 - Moving hazards sweep horizontally or diagonally across the ladder path at different heights.
 - Touching any hazard increments deaths and respawns the player at the base quickly.
@@ -20,14 +32,16 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - The stage clear page always shows `Next`, `Restart`, and `Back` in that order, and unavailable actions are disabled instead of being hidden or renamed.
 - `Esc` pauses and opens a bottom-left pause menu above the HUD button.
 - `R` retries the current stage immediately.
-- The gameplay HUD includes a `DEBUG SKIP` button that immediately clears the current stage and opens the result screen.
-- The gameplay HUD includes a bottom-left button that toggles between `PAUSE` and `RESUME`, and the pause menu opens right above that button on touch devices.
+- The gameplay HUD includes a `DEBUG SKIP` button in editor/debug builds only, so testing can still skip a stage without exposing that action in release builds.
+- The gameplay HUD includes a bottom-left `PAUSE` button, and the pause menu opens right above it as one aligned group of `Restart`, `Back`, and `RESUME` controls with the music toggle attached to the same block.
 - During gameplay, tapping or clicking anywhere on the playfield climbs one step so phone/web players do not need a dedicated `CLIMB` button.
 - The in-game HUD now focuses on stage info instead of showing large on-screen `CLIMB`, `RETRY`, and `PAUSE` buttons.
 - The title screen, level selection screen, and result screen are intentionally oversized so they stay easy to read and tap on phones.
-- The title, level selection, result, and pause screens use extra spacing between primary actions and secondary exit actions so the button groups read more clearly.
+- The title screen now favors a title-artwork-plus-buttons stack, with the artwork centered in a near-full-bleed upper area, the buttons grouped inside a narrower padded lower area, and a small music icon toggle in the upper-right so the opening page stays simple on phones.
+- The title, level selection, result, and pause screens use extra spacing between primary actions and exit-style actions so the button groups read more clearly.
+- The how-to-play screen uses the same centered oversized menu style as the other non-gameplay pages and now includes a control illustration near the top.
 - The pause and result screens use short labels like `Restart` and `Back` for faster recognition on phones.
-- Buttons now use a consistent role-based color system: bright blue for forward actions like `Start`, `Next`, and level buttons; muted blue-gray for `Restart`, `Back`, `Quit`, and `PAUSE` / `RESUME`; a flatter dark disabled style for unavailable actions; and a separate debug color for `DEBUG SKIP`.
+- Buttons now use a consistent role/state color system: bright blue for primary forward actions like `Start`, `Next`, and playable level buttons; a darker exit color for `Back` and `Quit`; a lighter support-blue utility color for `How To Play`, `Restart`, `PAUSE`, and `RESUME`; a flatter dark disabled style that can override any button when unavailable; and a separate debug color for development-only actions like `DEBUG SKIP`.
 - Menu panels and their inner content are centered on screen, and the component layout stays centered as screens get narrower instead of drifting toward one side.
 - The level selection screen shows a right-aligned total-gem row with a gem icon plus a per-stage gem value in a simple two-column list without target times.
 - The level selection screen also shows `Level 4 - Coming Soon` as a visible non-playable row so the next stage is visible before it is implemented.
@@ -42,8 +56,8 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - `Space`: Climb one step
 - `Esc`: Pause
 - `R`: Restart level
-- `PAUSE` / `RESUME` button: Toggle the pause menu
-- `DEBUG SKIP` button: Immediately clear the current stage for testing
+- `PAUSE` button: Open the pause menu
+- `DEBUG SKIP` button: Immediately clear the current stage for testing in editor/debug builds only
 - Tap or click anywhere during gameplay: Climb one step
 
 ## Rewards
@@ -86,6 +100,7 @@ Design rules for future stages:
 ### UI
 
 - `ui/TitleScreen.tscn`
+- `ui/HowToPlay.tscn`
 - `ui/LevelSelect.tscn`
 - `ui/HUD.tscn`
 - `ui/PauseMenu.tscn`
@@ -107,28 +122,35 @@ Design rules for future stages:
 
 - `managers/GameManager.gd`: Route changes, stage progression, unlock state during runtime
 - `managers/LevelManager.gd`: Timer, deaths, respawn point, and stage clear stats
-- `managers/AudioManager.gd`: Placeholder sound hook emitter
+- `managers/AudioManager.gd`: Looping background music playback plus placeholder sound hook emitter
 
 ## Visual Style
 
 - Simple placeholder geometry using `Polygon2D` for hazards and markers
 - The tower backdrops are shown with imported texture resources from `assets/tokyotower_tp.png`, `assets/skytree_tp.png`, and `assets/burj_khalifa_tp.png`
 - `Level01`, `Level02`, and `Level03` keep the backdrop presentation simple without extra sky/glow layers
-- The HUD shows enlarged stage info, current time, target time, and `PAUSE` / `DEBUG SKIP` buttons while climb input comes from tapping or clicking the gameplay screen
+- The HUD shows enlarged stage info, current time, target time, and a `PAUSE` button during normal play; editor/debug builds also show `DEBUG SKIP` while climb input comes from tapping or clicking the gameplay screen
 - Hazard placement keeps a small lower-left safe band clear around the pause control so buttons do not compete visually with flying obstacles
-- The title, level select, result, and pause menus use oversized panels plus brighter rounded buttons for mobile-friendly readability, with the pause menu anchored near the bottom-left HUD controls
+- The title, level select, result, and pause menus use oversized panels plus brighter rounded buttons for mobile-friendly readability, with the pause menu anchored near the bottom-left HUD controls as a compact aligned control block
 - Those menu screens also separate primary action groups from `Back`, `Quit`, or other leave-screen actions with a larger vertical gap
 - The pause and result actions favor shorter labels like `Restart` and `Back`
-- Button colors now communicate role consistently across the game: primary progression, secondary utility/navigation, disabled/unavailable, and debug-only actions
+- Button colors now communicate role consistently across the game: primary progression, exit, utility, disabled state, and debug-only development actions
 - Menu components are centered inside their panels so narrow mobile screens keep the same centered structure instead of shifting content to one side
 - Menus and HUD text/buttons use a portrait-first layout that expands naturally in landscape
+- The title screen and pause menu include a music icon toggle so players can mute or unmute the looping background music during the current session
 - The player is rendered as a back-view climbing ninja-cat using two alternating PNG climb frames while hazards and markers remain simple placeholder shapes
 - Flying hazards cross the ladder lane to create readable timing windows
 - The goal uses an imported gem texture resource at the top of the climb
 
 ## Audio
 
-Audio playback is not implemented with sound files yet.
+- Looping background music is loaded from `assets/cat_ninja_tower_music.mp3`.
+- The title screen and pause menu include a music icon button that toggles the background music on and off for the current session.
+- On web, the background music starts muted so browser audio restrictions do not silently turn it on during the first non-music interaction.
+- The web export also includes a small browser-audio hook so the music toggle can suspend or resume the browser `AudioContext` itself.
+- The music icon reflects whether the background music is currently audible, so it starts in the off state on web.
+- On web, the first tap on the music button turns the muted background music on.
+- Sound effect hooks still use placeholder events without attached samples yet.
 
 Current sound hook events:
 
@@ -142,6 +164,7 @@ Current sound hook events:
 - There is no persistent save system.
 - Legacy platformer scenes from the previous prototype still exist in the repository but are not used by `Level01`.
 - The project is intended to open directly in Godot 4.5 and run from `Main.tscn`.
+- For Godot web-specific implementation tips and browser pitfalls, refer to `docs/godot_web_tips.md`.
 
 ## Build
 

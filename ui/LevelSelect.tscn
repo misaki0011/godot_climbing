@@ -56,7 +56,7 @@ theme_override_constants/separation = 12
 [node name="TitleLabel" type="Label" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 32
-text = "Tower Ladder"
+text = "Ninja Cat Tower"
 horizontal_alignment = 1
 
 [node name="TotalGemRow" type="HBoxContainer" parent="CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer"]

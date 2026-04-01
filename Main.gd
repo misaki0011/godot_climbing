@@ -2,6 +2,7 @@ extends Node
 
 const PLAYER_SCENE := preload("res://player/Player.tscn")
 const TITLE_SCREEN_SCENE := preload("res://ui/TitleScreen.tscn")
+const HOW_TO_PLAY_SCENE := preload("res://ui/HowToPlay.tscn")
 const LEVEL_SELECT_SCENE := preload("res://ui/LevelSelect.tscn")
 const HUD_SCENE := preload("res://ui/HUD.tscn")
 const PAUSE_MENU_SCENE := preload("res://ui/PauseMenu.tscn")
@@ -32,6 +33,7 @@ func _ready() -> void:
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed("pause") and current_level != null:
+		AudioManager.notify_user_interaction()
 		if get_tree().paused:
 			_resume_game()
 		else:
@@ -42,9 +44,11 @@ func _unhandled_input(event: InputEvent) -> void:
 	if current_level == null or current_player == null or get_tree().paused:
 		return
 	if event is InputEventScreenTouch and event.pressed:
+		AudioManager.notify_user_interaction()
 		current_player.try_climb()
 		get_viewport().set_input_as_handled()
 	elif event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+		AudioManager.notify_user_interaction()
 		current_player.try_climb()
 		get_viewport().set_input_as_handled()
 
@@ -54,6 +58,9 @@ func _on_route_changed(route: String, level_index: int) -> void:
 		GameManager.TITLE:
 			_clear_level()
 			_show_menu(TITLE_SCREEN_SCENE.instantiate())
+		GameManager.HOW_TO_PLAY:
+			_clear_level()
+			_show_menu(HOW_TO_PLAY_SCENE.instantiate())
 		GameManager.LEVEL_SELECT:
 			_clear_level()
 			var menu := LEVEL_SELECT_SCENE.instantiate()
@@ -87,6 +94,8 @@ func _show_menu(menu: Control) -> void:
 	menu_root.add_child(menu)
 	if menu.has_signal("start_pressed"):
 		menu.start_pressed.connect(func() -> void: GameManager.show_level_select())
+	if menu.has_signal("how_to_play_pressed"):
+		menu.how_to_play_pressed.connect(func() -> void: GameManager.show_how_to_play())
 	if menu.has_signal("quit_pressed"):
 		menu.quit_pressed.connect(func() -> void: get_tree().quit())
 	if menu.has_signal("level_selected"):
@@ -209,4 +218,7 @@ func _ensure_overlay_scenes() -> void:
 	pause_menu.level_select_pressed.connect(func() -> void:
 		_resume_game()
 		GameManager.show_level_select()
+	)
+	pause_menu.resume_pressed.connect(func() -> void:
+		_resume_game()
 	)

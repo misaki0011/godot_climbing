@@ -3,6 +3,7 @@ extends Node
 signal route_changed(route: String, level_index: int)
 
 const TITLE := "title"
+const HOW_TO_PLAY := "how_to_play"
 const LEVEL_SELECT := "level_select"
 const STAGE := "stage"
 const STAGE_CLEAR := "stage_clear"
@@ -34,6 +35,11 @@ var stage_rewards := [0.0, 0.0, 0.0]
 func show_title() -> void:
 	current_level_index = -1
 	route_changed.emit(TITLE, -1)
+
+
+func show_how_to_play() -> void:
+	current_level_index = -1
+	route_changed.emit(HOW_TO_PLAY, -1)
 
 
 func show_level_select() -> void:

@@ -35,12 +35,14 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("restart"):
+		AudioManager.notify_user_interaction()
 		request_restart()
 
 	if respawning:
 		return
 
 	if Input.is_action_just_pressed("jump") and not step_in_progress:
+		AudioManager.notify_user_interaction()
 		try_climb()
 
 	if step_in_progress:

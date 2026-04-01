@@ -1,5 +1,7 @@
 extends Control
 
+const BUTTON_STYLES := preload("res://ui/ButtonStyles.gd")
+
 signal next_pressed
 signal retry_pressed
 signal back_pressed
@@ -100,16 +102,20 @@ func _apply_layout_scale() -> void:
 		var button: Button = get_node(button_path) as Button
 		button.custom_minimum_size = Vector2(0, 58) * scale_factor
 		button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-		_apply_button_style(button, scale_factor, "primary")
+		BUTTON_STYLES.apply_button_style(button, scale_factor, BUTTON_STYLES.ROLE_PRIMARY)
 
 	for button_path in [
 		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/RetryButton",
-		"CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BackButton",
 	]:
 		var button: Button = get_node(button_path) as Button
 		button.custom_minimum_size = Vector2(0, 58) * scale_factor
 		button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-		_apply_button_style(button, scale_factor, "secondary")
+		BUTTON_STYLES.apply_button_style(button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
+
+	var back_button: Button = $CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BackButton
+	back_button.custom_minimum_size = Vector2(0, 58) * scale_factor
+	back_button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	BUTTON_STYLES.apply_button_style(back_button, scale_factor, BUTTON_STYLES.ROLE_EXIT)
 
 
 func _get_mobile_scale() -> float:
@@ -126,46 +132,3 @@ func _get_mobile_scale() -> float:
 	if height > width:
 		base_scale *= 1.25
 	return clampf(base_scale * 2.0, 2.0, 9.0)
-
-
-func _apply_button_style(button: Button, scale_factor: float, role: String) -> void:
-	var corner_radius := int(round(16 * scale_factor))
-	var border_width := int(round(maxf(2.0, 2.0 * scale_factor)))
-
-	var normal := StyleBoxFlat.new()
-	var hover_color := Color(0.4, 0.52, 0.72, 1.0)
-	var pressed_color := Color(0.27, 0.38, 0.55, 1.0)
-	match role:
-		"secondary":
-			normal.bg_color = Color(0.22, 0.28, 0.36, 1.0)
-			normal.border_color = Color(0.43, 0.54, 0.66, 1.0)
-			hover_color = Color(0.28, 0.35, 0.45, 1.0)
-			pressed_color = Color(0.18, 0.24, 0.31, 1.0)
-		_:
-			normal.bg_color = Color(0.34, 0.45, 0.62, 1.0)
-			normal.border_color = Color(0.62, 0.75, 0.95, 1.0)
-	normal.set_corner_radius_all(corner_radius)
-	normal.set_border_width_all(border_width)
-	normal.content_margin_left = 18 * scale_factor
-	normal.content_margin_right = 18 * scale_factor
-	normal.content_margin_top = 12 * scale_factor
-	normal.content_margin_bottom = 12 * scale_factor
-
-	var hover := normal.duplicate()
-	hover.bg_color = hover_color
-
-	var pressed := normal.duplicate()
-	pressed.bg_color = pressed_color
-
-	var disabled := normal.duplicate()
-	disabled.bg_color = Color(0.14, 0.16, 0.19, 0.9)
-	disabled.border_color = Color(0.24, 0.27, 0.31, 0.95)
-
-	button.add_theme_stylebox_override("normal", normal)
-	button.add_theme_stylebox_override("hover", hover)
-	button.add_theme_stylebox_override("pressed", pressed)
-	button.add_theme_stylebox_override("disabled", disabled)
-	button.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_pressed_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_disabled_color", Color(0.46, 0.49, 0.54, 1.0))

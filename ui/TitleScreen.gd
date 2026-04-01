@@ -1,43 +1,98 @@
 extends Control
 
+const BUTTON_STYLES := preload("res://ui/ButtonStyles.gd")
+
 signal start_pressed
+signal how_to_play_pressed
 signal quit_pressed
+
+var music_on_icon: Texture2D = null
+var music_off_icon: Texture2D = null
 
 
 func _ready() -> void:
-	$CenterContainer/Panel/VBoxContainer/StartButton.pressed.connect(func() -> void: start_pressed.emit())
-	$CenterContainer/Panel/VBoxContainer/QuitButton.pressed.connect(func() -> void: quit_pressed.emit())
+	$CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/StartButton.pressed.connect(func() -> void:
+		AudioManager.notify_user_interaction()
+		start_pressed.emit()
+	)
+	$CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/HowToPlayButton.pressed.connect(func() -> void:
+		AudioManager.notify_user_interaction()
+		how_to_play_pressed.emit()
+	)
+	$CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/QuitButton.pressed.connect(func() -> void:
+		AudioManager.notify_user_interaction()
+		quit_pressed.emit()
+	)
+	$CenterContainer/Panel/MusicButton.pressed.connect(func() -> void:
+		AudioManager.handle_music_toggle_interaction()
+	)
+	$CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect.texture = _load_title_texture("res://assets/cat_ninja_tower_title.png")
+	music_on_icon = _load_title_texture("res://assets/music_on.svg")
+	music_off_icon = _load_title_texture("res://assets/music_off.svg")
+	AudioManager.music_muted_changed.connect(_update_music_button_icon)
 	get_viewport().size_changed.connect(_apply_layout_scale)
 	_apply_layout_scale()
+	_update_music_button_icon(AudioManager.is_music_muted())
 
 
 func _apply_layout_scale() -> void:
 	var scale_factor: float = _get_mobile_scale()
+	var window_size: Vector2 = Vector2(get_window().size)
+	var outer_margin := 24.0 * scale_factor
+	var desired_panel_size := Vector2(580, 820) * scale_factor
+	var panel_size := Vector2(
+		minf(desired_panel_size.x, maxf(300.0 * scale_factor, window_size.x - outer_margin * 2.0)),
+		minf(desired_panel_size.y, maxf(420.0 * scale_factor, window_size.y - outer_margin * 2.0))
+	)
 	var panel: Panel = $CenterContainer/Panel
-	panel.custom_minimum_size = Vector2(420, 280) * scale_factor
+	panel.custom_minimum_size = panel_size
+	var panel_padding := minf(8.0 * scale_factor, panel_size.x * 0.025)
+	var music_button: Button = $CenterContainer/Panel/MusicButton
+	var music_button_size := minf(76.0 * scale_factor, panel_size.x * 0.16)
+	var music_button_inset := maxf(10.0 * scale_factor, panel_padding + 4.0 * scale_factor)
+	music_button.custom_minimum_size = Vector2(music_button_size, music_button_size)
+	music_button.offset_left = -(music_button_inset + music_button_size)
+	music_button.offset_top = music_button_inset
+	music_button.offset_right = -music_button_inset
+	music_button.offset_bottom = music_button_inset + music_button_size
+	BUTTON_STYLES.apply_button_style(music_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
 
-	$CenterContainer/Panel/VBoxContainer.offset_left = 40.0 * scale_factor
-	$CenterContainer/Panel/VBoxContainer.offset_top = 32.0 * scale_factor
-	$CenterContainer/Panel/VBoxContainer.offset_right = 380.0 * scale_factor
-	$CenterContainer/Panel/VBoxContainer.offset_bottom = 248.0 * scale_factor
+	$CenterContainer/Panel/VBoxContainer.offset_left = panel_padding
+	$CenterContainer/Panel/VBoxContainer.offset_top = panel_padding
+	$CenterContainer/Panel/VBoxContainer.offset_right = panel_size.x - panel_padding
+	$CenterContainer/Panel/VBoxContainer.offset_bottom = panel_size.y - panel_padding
 
-	$CenterContainer/Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(42 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/SubtitleLabel.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/Spacer.custom_minimum_size = Vector2(0, 20) * scale_factor
-	$CenterContainer/Panel/VBoxContainer/QuitGap.custom_minimum_size = Vector2(0, 18) * scale_factor
+	var art_size := Vector2(
+		maxf(220.0 * scale_factor, panel_size.x - panel_padding * 2.0),
+		minf(620.0 * scale_factor, panel_size.y * 0.66)
+	)
+	$CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect.custom_minimum_size = art_size
+	$CenterContainer/Panel/VBoxContainer/Spacer.custom_minimum_size = Vector2(0, 12) * scale_factor
+	$CenterContainer/Panel/VBoxContainer/ButtonArea.add_theme_constant_override("margin_left", int(round(minf(64.0 * scale_factor, panel_size.x * 0.12))))
+	$CenterContainer/Panel/VBoxContainer/ButtonArea.add_theme_constant_override("margin_right", int(round(minf(64.0 * scale_factor, panel_size.x * 0.12))))
+	$CenterContainer/Panel/VBoxContainer/ButtonArea.add_theme_constant_override("margin_top", int(round(10 * scale_factor)))
+	$CenterContainer/Panel/VBoxContainer/ButtonArea.add_theme_constant_override("margin_bottom", int(round(10 * scale_factor)))
+	$CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox.add_theme_constant_override("separation", int(round(14 * scale_factor)))
+	$CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/QuitGap.custom_minimum_size = Vector2(0, 18) * scale_factor
 
 	for button_path in [
-		"CenterContainer/Panel/VBoxContainer/StartButton",
+		"CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/StartButton",
 	]:
 		var button: Button = get_node(button_path) as Button
 		button.custom_minimum_size = Vector2(0, 54) * scale_factor
 		button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-		_apply_button_style(button, scale_factor, "primary")
+		BUTTON_STYLES.apply_button_style(button, scale_factor, BUTTON_STYLES.ROLE_PRIMARY)
 
-	var quit_button: Button = $CenterContainer/Panel/VBoxContainer/QuitButton
+	var how_to_play_button: Button = $CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/HowToPlayButton
+	how_to_play_button.custom_minimum_size = Vector2(0, 54) * scale_factor
+	how_to_play_button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	BUTTON_STYLES.apply_button_style(how_to_play_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
+
+	var quit_button: Button = $CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/QuitButton
 	quit_button.custom_minimum_size = Vector2(0, 54) * scale_factor
 	quit_button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-	_apply_button_style(quit_button, scale_factor, "secondary")
+	BUTTON_STYLES.apply_button_style(quit_button, scale_factor, BUTTON_STYLES.ROLE_EXIT)
+	_update_music_button_icon(AudioManager.is_music_muted())
 
 
 func _get_mobile_scale() -> float:
@@ -56,44 +111,42 @@ func _get_mobile_scale() -> float:
 	return clampf(base_scale * 2.0, 2.0, 9.0)
 
 
-func _apply_button_style(button: Button, scale_factor: float, role: String) -> void:
-	var corner_radius := int(round(16 * scale_factor))
-	var border_width := int(round(maxf(2.0, 2.0 * scale_factor)))
+func _load_title_texture(path: String) -> Texture2D:
+	var import_metadata_path := "%s.import" % path
+	if ResourceLoader.exists(path) or FileAccess.file_exists(ProjectSettings.globalize_path(import_metadata_path)):
+		var resource := load(path)
+		if resource is Texture2D:
+			return resource
 
-	var normal := StyleBoxFlat.new()
-	var hover_color := Color(0.4, 0.52, 0.72, 1.0)
-	var pressed_color := Color(0.27, 0.38, 0.55, 1.0)
-	match role:
-		"secondary":
-			normal.bg_color = Color(0.22, 0.28, 0.36, 1.0)
-			normal.border_color = Color(0.43, 0.54, 0.66, 1.0)
-			hover_color = Color(0.28, 0.35, 0.45, 1.0)
-			pressed_color = Color(0.18, 0.24, 0.31, 1.0)
-		_:
-			normal.bg_color = Color(0.34, 0.45, 0.62, 1.0)
-			normal.border_color = Color(0.62, 0.75, 0.95, 1.0)
-	normal.set_corner_radius_all(corner_radius)
-	normal.set_border_width_all(border_width)
-	normal.content_margin_left = 18 * scale_factor
-	normal.content_margin_right = 18 * scale_factor
-	normal.content_margin_top = 12 * scale_factor
-	normal.content_margin_bottom = 12 * scale_factor
+	var absolute_path := ProjectSettings.globalize_path(path)
+	if not FileAccess.file_exists(absolute_path):
+		push_warning("Title texture not found: %s" % path)
+		return null
 
-	var hover := normal.duplicate()
-	hover.bg_color = hover_color
+	if path.get_extension().to_lower() == "svg":
+		var svg_text := FileAccess.get_file_as_string(absolute_path)
+		if svg_text.is_empty():
+			push_warning("Title texture could not be loaded: %s" % path)
+			return null
+		var svg_image := Image.new()
+		var svg_error := svg_image.load_svg_from_string(svg_text)
+		if svg_error != OK:
+			push_warning("Title texture could not be loaded: %s" % path)
+			return null
+		return ImageTexture.create_from_image(svg_image)
 
-	var pressed := normal.duplicate()
-	pressed.bg_color = pressed_color
+	var image := Image.new()
+	var error := image.load(absolute_path)
+	if error != OK:
+		push_warning("Title texture could not be loaded: %s" % path)
+		return null
 
-	var disabled := normal.duplicate()
-	disabled.bg_color = Color(0.14, 0.16, 0.19, 0.9)
-	disabled.border_color = Color(0.24, 0.27, 0.31, 0.95)
+	return ImageTexture.create_from_image(image)
 
-	button.add_theme_stylebox_override("normal", normal)
-	button.add_theme_stylebox_override("hover", hover)
-	button.add_theme_stylebox_override("pressed", pressed)
-	button.add_theme_stylebox_override("disabled", disabled)
-	button.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_pressed_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_disabled_color", Color(0.46, 0.49, 0.54, 1.0))
+
+func _update_music_button_icon(is_muted: bool) -> void:
+	var music_button: Button = $CenterContainer/Panel/MusicButton
+	var show_muted := is_muted or not AudioManager.is_music_audible()
+	music_button.icon = music_off_icon if show_muted else music_on_icon
+	music_button.expand_icon = true
+	music_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER

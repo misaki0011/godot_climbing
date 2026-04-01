@@ -1,25 +1,48 @@
 extends Control
 
+const BUTTON_STYLES := preload("res://ui/ButtonStyles.gd")
+
 signal restart_pressed
 signal level_select_pressed
+signal resume_pressed
+
+var music_on_icon: Texture2D = null
+var music_off_icon: Texture2D = null
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	$Panel/VBoxContainer/RestartButton.pressed.connect(func() -> void: restart_pressed.emit())
-	$Panel/VBoxContainer/LevelSelectButton.pressed.connect(func() -> void: level_select_pressed.emit())
+	$Panel/VBoxContainer/TopRow/RestartButton.pressed.connect(func() -> void:
+		AudioManager.notify_user_interaction()
+		restart_pressed.emit()
+	)
+	$Panel/VBoxContainer/BackButton.pressed.connect(func() -> void:
+		AudioManager.notify_user_interaction()
+		level_select_pressed.emit()
+	)
+	$Panel/VBoxContainer/ResumeButton.pressed.connect(func() -> void:
+		AudioManager.notify_user_interaction()
+		resume_pressed.emit()
+	)
+	$Panel/VBoxContainer/TopRow/MusicButton.pressed.connect(func() -> void:
+		AudioManager.handle_music_toggle_interaction()
+	)
+	music_on_icon = _load_ui_texture("res://assets/music_on.svg")
+	music_off_icon = _load_ui_texture("res://assets/music_off.svg")
+	AudioManager.music_muted_changed.connect(_update_music_button_icon)
 	get_viewport().size_changed.connect(_apply_layout_scale)
 	_apply_layout_scale()
+	_update_music_button_icon(AudioManager.is_music_muted())
 
 
 func _apply_layout_scale() -> void:
 	var scale_factor: float = _get_mobile_scale()
 	var panel: Panel = $Panel
-	panel.custom_minimum_size = Vector2(204, 152) * scale_factor
+	panel.custom_minimum_size = Vector2(204, 214) * scale_factor
 	panel.offset_left = 24.0 * scale_factor
-	panel.offset_top = -396.0 * scale_factor
+	panel.offset_top = -302.0 * scale_factor
 	panel.offset_right = 228.0 * scale_factor
-	panel.offset_bottom = -170.0 * scale_factor
+	panel.offset_bottom = -88.0 * scale_factor
 
 	var box: VBoxContainer = $Panel/VBoxContainer
 	box.offset_left = 0.0
@@ -27,18 +50,31 @@ func _apply_layout_scale() -> void:
 	box.offset_right = 0.0
 	box.offset_bottom = 0.0
 	box.add_theme_constant_override("separation", int(round(10 * scale_factor)))
+	$Panel/VBoxContainer/TopRow.add_theme_constant_override("separation", int(round(10 * scale_factor)))
 
 	$Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(28 * scale_factor)))
-	$Panel/VBoxContainer/ExitGap.custom_minimum_size = Vector2(0, 18) * scale_factor
+	var top_row: HBoxContainer = $Panel/VBoxContainer/TopRow
+	top_row.custom_minimum_size = Vector2(204, 62) * scale_factor
 
-	for button_path in [
-		"Panel/VBoxContainer/RestartButton",
-		"Panel/VBoxContainer/LevelSelectButton",
-	]:
-		var button: Button = get_node(button_path) as Button
-		button.custom_minimum_size = Vector2(204, 62) * scale_factor
-		button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
-		_apply_button_style(button, scale_factor, "secondary")
+	var restart_button: Button = $Panel/VBoxContainer/TopRow/RestartButton
+	restart_button.custom_minimum_size = Vector2(130, 62) * scale_factor
+	restart_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	BUTTON_STYLES.apply_button_style(restart_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
+
+	var music_button: Button = $Panel/VBoxContainer/TopRow/MusicButton
+	music_button.custom_minimum_size = Vector2(64, 62) * scale_factor
+	BUTTON_STYLES.apply_button_style(music_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
+
+	var back_button: Button = $Panel/VBoxContainer/BackButton
+	back_button.custom_minimum_size = Vector2(204, 62) * scale_factor
+	back_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	BUTTON_STYLES.apply_button_style(back_button, scale_factor, BUTTON_STYLES.ROLE_EXIT)
+
+	var resume_button: Button = $Panel/VBoxContainer/ResumeButton
+	resume_button.custom_minimum_size = Vector2(204, 62) * scale_factor
+	resume_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	BUTTON_STYLES.apply_button_style(resume_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
+	_update_music_button_icon(AudioManager.is_music_muted())
 
 
 func _get_mobile_scale() -> float:
@@ -57,44 +93,40 @@ func _get_mobile_scale() -> float:
 	return clampf(base_scale * 2.0, 2.0, 9.0)
 
 
-func _apply_button_style(button: Button, scale_factor: float, role: String) -> void:
-	var corner_radius := int(round(16 * scale_factor))
-	var border_width := int(round(maxf(2.0, 2.0 * scale_factor)))
+func _load_ui_texture(path: String) -> Texture2D:
+	if ResourceLoader.exists(path):
+		var resource := load(path)
+		if resource is Texture2D:
+			return resource
 
-	var normal := StyleBoxFlat.new()
-	var hover_color := Color(0.4, 0.52, 0.72, 1.0)
-	var pressed_color := Color(0.27, 0.38, 0.55, 1.0)
-	match role:
-		"secondary":
-			normal.bg_color = Color(0.22, 0.28, 0.36, 1.0)
-			normal.border_color = Color(0.43, 0.54, 0.66, 1.0)
-			hover_color = Color(0.28, 0.35, 0.45, 1.0)
-			pressed_color = Color(0.18, 0.24, 0.31, 1.0)
-		_:
-			normal.bg_color = Color(0.34, 0.45, 0.62, 1.0)
-			normal.border_color = Color(0.62, 0.75, 0.95, 1.0)
-	normal.set_corner_radius_all(corner_radius)
-	normal.set_border_width_all(border_width)
-	normal.content_margin_left = 18 * scale_factor
-	normal.content_margin_right = 18 * scale_factor
-	normal.content_margin_top = 12 * scale_factor
-	normal.content_margin_bottom = 12 * scale_factor
+	var absolute_path := ProjectSettings.globalize_path(path)
+	if not FileAccess.file_exists(absolute_path):
+		push_warning("UI texture could not be loaded: %s" % path)
+		return null
 
-	var hover := normal.duplicate()
-	hover.bg_color = hover_color
+	if path.get_extension().to_lower() == "svg":
+		var svg_text := FileAccess.get_file_as_string(absolute_path)
+		if svg_text.is_empty():
+			push_warning("UI texture could not be loaded: %s" % path)
+			return null
+		var svg_image := Image.new()
+		var svg_error := svg_image.load_svg_from_string(svg_text)
+		if svg_error != OK:
+			push_warning("UI texture could not be loaded: %s" % path)
+			return null
+		return ImageTexture.create_from_image(svg_image)
 
-	var pressed := normal.duplicate()
-	pressed.bg_color = pressed_color
+	var image := Image.new()
+	var error := image.load(absolute_path)
+	if error != OK:
+		push_warning("UI texture could not be loaded: %s" % path)
+		return null
+	return ImageTexture.create_from_image(image)
 
-	var disabled := normal.duplicate()
-	disabled.bg_color = Color(0.14, 0.16, 0.19, 0.9)
-	disabled.border_color = Color(0.24, 0.27, 0.31, 0.95)
 
-	button.add_theme_stylebox_override("normal", normal)
-	button.add_theme_stylebox_override("hover", hover)
-	button.add_theme_stylebox_override("pressed", pressed)
-	button.add_theme_stylebox_override("disabled", disabled)
-	button.add_theme_color_override("font_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_hover_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_pressed_color", Color(1, 1, 1, 1))
-	button.add_theme_color_override("font_disabled_color", Color(0.46, 0.49, 0.54, 1.0))
+func _update_music_button_icon(is_muted: bool) -> void:
+	var music_button: Button = $Panel/VBoxContainer/TopRow/MusicButton
+	var show_muted := is_muted or not AudioManager.is_music_audible()
+	music_button.icon = music_off_icon if show_muted else music_on_icon
+	music_button.expand_icon = true
+	music_button.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
