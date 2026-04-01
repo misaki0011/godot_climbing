@@ -209,7 +209,7 @@ func _ensure_overlay_scenes() -> void:
 	)
 
 	pause_menu = PAUSE_MENU_SCENE.instantiate()
-	overlay_root.add_child(pause_menu)
+	hud.add_child(pause_menu)
 	pause_menu.hide()
 	pause_menu.restart_pressed.connect(func() -> void:
 		_resume_game()

@@ -33,7 +33,7 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - `Esc` pauses and opens a bottom-left pause menu above the HUD button.
 - `R` retries the current stage immediately.
 - The gameplay HUD includes a `DEBUG SKIP` button in editor/debug builds only, so testing can still skip a stage without exposing that action in release builds.
-- The gameplay HUD includes a bottom-left `PAUSE` button, and the pause menu opens right above it as one aligned group of `Restart`, `Back`, and `RESUME` controls with the music toggle attached to the same block.
+- The gameplay HUD includes a bottom-left `PAUSE` button, and the pause menu opens right above it as one aligned group of `RESUME`, `Restart`, and `Back` controls with the music toggle attached to the same block while staying pinned to the screen as the camera climbs.
 - During gameplay, tapping or clicking anywhere on the playfield climbs one step so phone/web players do not need a dedicated `CLIMB` button.
 - The in-game HUD now focuses on stage info instead of showing large on-screen `CLIMB`, `RETRY`, and `PAUSE` buttons.
 - The title screen, level selection screen, and result screen are intentionally oversized so they stay easy to read and tap on phones.
@@ -41,6 +41,7 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - The title, level selection, result, and pause screens use extra spacing between primary actions and exit-style actions so the button groups read more clearly.
 - The how-to-play screen uses the same centered oversized menu style as the other non-gameplay pages and now includes a control illustration near the top.
 - The pause and result screens use short labels like `Restart` and `Back` for faster recognition on phones.
+- The pause and result screens follow one placement rule: forward action first, utility action next, and exit action last.
 - Buttons now use a consistent role/state color system: bright blue for primary forward actions like `Start`, `Next`, and playable level buttons; a darker exit color for `Back` and `Quit`; a lighter support-blue utility color for `How To Play`, `Restart`, `PAUSE`, and `RESUME`; a flatter dark disabled style that can override any button when unavailable; and a separate debug color for development-only actions like `DEBUG SKIP`.
 - Menu panels and their inner content are centered on screen, and the component layout stays centered as screens get narrower instead of drifting toward one side.
 - The level selection screen shows a right-aligned total-gem row with a gem icon plus a per-stage gem value in a simple two-column list without target times.
@@ -131,7 +132,7 @@ Design rules for future stages:
 - `Level01`, `Level02`, and `Level03` keep the backdrop presentation simple without extra sky/glow layers
 - The HUD shows enlarged stage info, current time, target time, and a `PAUSE` button during normal play; editor/debug builds also show `DEBUG SKIP` while climb input comes from tapping or clicking the gameplay screen
 - Hazard placement keeps a small lower-left safe band clear around the pause control so buttons do not compete visually with flying obstacles
-- The title, level select, result, and pause menus use oversized panels plus brighter rounded buttons for mobile-friendly readability, with the pause menu anchored near the bottom-left HUD controls as a compact aligned control block
+- The title, level select, result, and pause menus use oversized panels plus brighter rounded buttons for mobile-friendly readability, with the pause menu anchored near the bottom-left HUD controls as a compact aligned control block that remains visible as gameplay scrolls upward
 - Those menu screens also separate primary action groups from `Back`, `Quit`, or other leave-screen actions with a larger vertical gap
 - The pause and result actions favor shorter labels like `Restart` and `Back`
 - Button colors now communicate role consistently across the game: primary progression, exit, utility, disabled state, and debug-only development actions

@@ -53,8 +53,14 @@ func _apply_layout_scale() -> void:
 	$Panel/VBoxContainer/TopRow.add_theme_constant_override("separation", int(round(10 * scale_factor)))
 
 	$Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(28 * scale_factor)))
+	$Panel/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, 18) * scale_factor
 	var top_row: HBoxContainer = $Panel/VBoxContainer/TopRow
 	top_row.custom_minimum_size = Vector2(204, 62) * scale_factor
+
+	var resume_button: Button = $Panel/VBoxContainer/ResumeButton
+	resume_button.custom_minimum_size = Vector2(204, 62) * scale_factor
+	resume_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	BUTTON_STYLES.apply_button_style(resume_button, scale_factor, BUTTON_STYLES.ROLE_PRIMARY)
 
 	var restart_button: Button = $Panel/VBoxContainer/TopRow/RestartButton
 	restart_button.custom_minimum_size = Vector2(130, 62) * scale_factor
@@ -69,11 +75,6 @@ func _apply_layout_scale() -> void:
 	back_button.custom_minimum_size = Vector2(204, 62) * scale_factor
 	back_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
 	BUTTON_STYLES.apply_button_style(back_button, scale_factor, BUTTON_STYLES.ROLE_EXIT)
-
-	var resume_button: Button = $Panel/VBoxContainer/ResumeButton
-	resume_button.custom_minimum_size = Vector2(204, 62) * scale_factor
-	resume_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
-	BUTTON_STYLES.apply_button_style(resume_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
 	_update_music_button_icon(AudioManager.is_music_muted())
 
 

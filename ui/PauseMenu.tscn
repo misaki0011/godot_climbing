@@ -52,6 +52,10 @@ theme_override_font_sizes/font_size = 28
 text = "Paused"
 horizontal_alignment = 1
 
+[node name="ResumeButton" type="Button" parent="Panel/VBoxContainer"]
+layout_mode = 2
+text = "RESUME"
+
 [node name="TopRow" type="HBoxContainer" parent="Panel/VBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 10
@@ -66,10 +70,10 @@ layout_mode = 2
 focus_mode = 0
 tooltip_text = "Toggle music"
 
+[node name="BackGap" type="Control" parent="Panel/VBoxContainer"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+
 [node name="BackButton" type="Button" parent="Panel/VBoxContainer"]
 layout_mode = 2
 text = "Back"
-
-[node name="ResumeButton" type="Button" parent="Panel/VBoxContainer"]
-layout_mode = 2
-text = "RESUME"
