@@ -15,6 +15,7 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - Boot opens the title screen.
 - The title screen includes `Start`, `How To Play`, and `Quit`.
 - The title screen now uses a simple stacked layout where the `Ninja Cat Tower` title artwork sits centered in the upper area with very little surrounding padding, while the buttons sit in a narrower padded lower area and a small music icon toggle stays inset from the upper-right edge on narrow screens.
+- The title screen uses the refreshed `cat_ninja_tower_title_v2.png` artwork, and the project/web icon now uses a square crop of the same tower-and-cat illustration for matching branding.
 - `How To Play` opens a short instruction screen with two simple gameplay lines plus a control illustration for phone tap and PC `Space`.
 - `Start` opens a stage select screen for `Level01`, `Level02`, and `Level03`.
 - `Level01` is a Tokyo Tower climb, `Level02` is a Skytree climb, and `Level03` is a Burj Khalifa climb.
@@ -147,6 +148,7 @@ Design rules for future stages:
 
 - Looping background music is loaded from `assets/cat_ninja_tower_music.mp3`.
 - The title screen and pause menu include a music icon button that toggles the background music on and off for the current session.
+- Web exports inherit the project icon from `assets/ninja_cat_tower_icon.png`, so browser-installed/app-style surfaces use the same cat-and-tower branding as the title screen.
 - On web, the background music starts muted so browser audio restrictions do not silently turn it on during the first non-music interaction.
 - The web export also includes a small browser-audio hook so the music toggle can suspend or resume the browser `AudioContext` itself.
 - The music icon reflects whether the background music is currently audible, so it starts in the off state on web.

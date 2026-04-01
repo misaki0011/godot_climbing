@@ -11,6 +11,7 @@ config_version=5
 [application]
 
 config/name="Ninja Cat Tower"
+config/icon="res://assets/ninja_cat_tower_icon.png"
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.5")
 

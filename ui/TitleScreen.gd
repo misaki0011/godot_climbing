@@ -26,7 +26,7 @@ func _ready() -> void:
 	$CenterContainer/Panel/MusicButton.pressed.connect(func() -> void:
 		AudioManager.handle_music_toggle_interaction()
 	)
-	$CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect.texture = _load_title_texture("res://assets/cat_ninja_tower_title.png")
+	$CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect.texture = _load_title_texture("res://assets/cat_ninja_tower_title_v2.png")
 	music_on_icon = _load_title_texture("res://assets/music_on.svg")
 	music_off_icon = _load_title_texture("res://assets/music_off.svg")
 	AudioManager.music_muted_changed.connect(_update_music_button_icon)
