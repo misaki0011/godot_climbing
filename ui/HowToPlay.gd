@@ -1,6 +1,7 @@
 extends Control
 
 const BUTTON_STYLES := preload("res://ui/ButtonStyles.gd")
+const UI_METRICS := preload("res://ui/UIMetrics.gd")
 
 signal back_pressed
 
@@ -14,47 +15,36 @@ func _ready() -> void:
 
 func _apply_layout_scale() -> void:
 	var scale_factor: float = _get_mobile_scale()
+	var metrics: Dictionary = UI_METRICS.HOW_TO_PLAY
 	var panel: Panel = $CenterContainer/Panel
-	panel.custom_minimum_size = Vector2(520, 520) * scale_factor
+	panel.custom_minimum_size = metrics["panel_size"] * scale_factor
 
 	var box: VBoxContainer = $CenterContainer/Panel/VBoxContainer
-	box.offset_left = 40.0 * scale_factor
-	box.offset_top = 32.0 * scale_factor
-	box.offset_right = 480.0 * scale_factor
-	box.offset_bottom = 488.0 * scale_factor
+	box.offset_left = float(metrics["content_left"]) * scale_factor
+	box.offset_top = float(metrics["content_top"]) * scale_factor
+	box.offset_right = float(metrics["content_right"]) * scale_factor
+	box.offset_bottom = float(metrics["content_bottom"]) * scale_factor
 
-	$CenterContainer/Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(40 * scale_factor)))
+	$CenterContainer/Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(float(metrics["title_font_size"]) * scale_factor)))
 	for label_path in [
 		"CenterContainer/Panel/VBoxContainer/IntroLabel",
 		"CenterContainer/Panel/VBoxContainer/ClimbLabel",
 	]:
 		var label: Label = get_node(label_path) as Label
-		label.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+		label.add_theme_font_size_override("font_size", int(round(float(metrics["body_font_size"]) * scale_factor)))
 
-	$CenterContainer/Panel/VBoxContainer/IllustrationRect.custom_minimum_size = Vector2(0, 220) * scale_factor
-	$CenterContainer/Panel/VBoxContainer/BodyGap.custom_minimum_size = Vector2(0, 12) * scale_factor
-	$CenterContainer/Panel/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, 22) * scale_factor
+	$CenterContainer/Panel/VBoxContainer/IllustrationRect.custom_minimum_size = Vector2(0, float(metrics["illustration_height"])) * scale_factor
+	$CenterContainer/Panel/VBoxContainer/BodyGap.custom_minimum_size = Vector2(0, float(metrics["body_gap"])) * scale_factor
+	$CenterContainer/Panel/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, float(metrics["back_gap"])) * scale_factor
 
 	var back_button: Button = $CenterContainer/Panel/VBoxContainer/BackButton
-	back_button.custom_minimum_size = Vector2(0, 54) * scale_factor
-	back_button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	back_button.custom_minimum_size = Vector2(0, float(metrics["button_height"])) * scale_factor
+	back_button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 	BUTTON_STYLES.apply_button_style(back_button, scale_factor, BUTTON_STYLES.ROLE_EXIT)
 
 
 func _get_mobile_scale() -> float:
-	var window_size: Vector2i = get_window().size
-	var width: float = float(window_size.x)
-	var height: float = float(window_size.y)
-	if width <= 0.0 or height <= 0.0:
-		return 1.0
-	var base_width: float = float(ProjectSettings.get_setting("display/window/size/viewport_width"))
-	var base_height: float = float(ProjectSettings.get_setting("display/window/size/viewport_height"))
-	var width_scale: float = base_width / width
-	var height_scale: float = base_height / height
-	var base_scale: float = maxf(1.0, maxf(width_scale, height_scale))
-	if height > width:
-		base_scale *= 1.25
-	return clampf(base_scale * 2.0, 2.0, 9.0)
+	return UI_METRICS.get_menu_scale(get_window().size)
 
 
 

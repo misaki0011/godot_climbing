@@ -15,6 +15,9 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - Boot opens the title screen.
 - The title screen includes `Start`, `How To Play`, and `Quit`.
 - The title screen now uses a simple stacked layout where the `Ninja Cat Tower` title artwork sits centered in the upper area with very little surrounding padding, while the buttons sit in a narrower padded lower area and a small music icon toggle stays inset from the upper-right edge on narrow screens.
+- The title screen clamps its artwork height against the available button space so the full title stack stays visible on horizontal mobile/web viewports instead of clipping off the top.
+- The title artwork is shown in an aspect-fit mode, so horizontal desktop/web views keep the full image visible instead of cropping the top of the logo art inside its frame.
+- The title screen now switches to a wide layout on broad viewports, placing the artwork on the left and a balanced right-side control column on the right, with the music toggle staying clear of the main action buttons.
 - The title screen uses the refreshed `cat_ninja_tower_title_v2.png` artwork, and the project/web icon now uses a square crop of the same tower-and-cat illustration for matching branding.
 - `How To Play` opens a short instruction screen with two simple gameplay lines plus a control illustration for phone tap and PC `Space`.
 - `Start` opens a stage select screen for `Level01`, `Level02`, and `Level03`.
@@ -47,8 +50,9 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - Menu panels and their inner content are centered on screen, and the component layout stays centered as screens get narrower instead of drifting toward one side.
 - The level selection screen shows a right-aligned total-gem row with a gem icon plus a per-stage gem value in a simple two-column list without target times.
 - The level selection screen also shows `Level 4 - Coming Soon` as a visible non-playable row so the next stage is visible before it is implemented.
-- Menus and HUD controls use portrait-first scaling so phone screens stay readable while landscape gets a roomier version of the same layout.
-- Menus and HUD now share one unified mobile scaling rule instead of per-screen multiplier tweaks, so button sizes stay consistent across screens.
+- Menus and HUD controls use a shared adaptive scaling system so portrait phones stay large and readable while desktop and horizontal screens relax into a less oversized layout.
+- Menu-style screens such as the title, how-to-play, level select, and result pages keep a slightly stronger scale than gameplay HUD overlays, so menus still feel bold on wide screens without overwhelming gameplay UI.
+- UI sizing for every game view now comes from `ui/UIMetrics.gd`, which centralizes scale rules and per-view size tokens for the title, how-to-play, level select, HUD, pause menu, and result screens.
 - Selection and result panels clamp to the available screen width so their contents stay centered and do not spill off-screen on narrow mobile viewports.
 - The camera follows the ascent up tower-themed backdrops loaded from `assets/tokyotower_tp.png`, `assets/skytree_tp.png`, and `assets/burj_khalifa_tp.png`.
 - The player character is a back-view climbing ninja-cat that alternates between two climb frames instead of a plain placeholder block.
@@ -107,6 +111,7 @@ Design rules for future stages:
 - `ui/HUD.tscn`
 - `ui/PauseMenu.tscn`
 - `ui/StageClear.tscn`: Separate visible results page shown after leaving the stage
+- `ui/UIMetrics.gd`: Shared UI sizing/source-of-truth file for every game view
 
 ### Active Gameplay
 
@@ -138,7 +143,7 @@ Design rules for future stages:
 - The pause and result actions favor shorter labels like `Restart` and `Back`
 - Button colors now communicate role consistently across the game: primary progression, exit, utility, disabled state, and debug-only development actions
 - Menu components are centered inside their panels so narrow mobile screens keep the same centered structure instead of shifting content to one side
-- Menus and HUD text/buttons use a portrait-first layout that expands naturally in landscape
+- Menus and HUD text/buttons use an adaptive layout that stays readable on portrait phones while fitting more comfortably on desktop and horizontal screens, with menu pages staying intentionally larger than in-game overlays
 - The title screen and pause menu include a music icon toggle so players can mute or unmute the looping background music during the current session
 - The player is rendered as a back-view climbing ninja-cat using two alternating PNG climb frames while hazards and markers remain simple placeholder shapes
 - Flying hazards cross the ladder lane to create readable timing windows

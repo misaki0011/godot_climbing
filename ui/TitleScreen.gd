@@ -1,6 +1,7 @@
 extends Control
 
 const BUTTON_STYLES := preload("res://ui/ButtonStyles.gd")
+const UI_METRICS := preload("res://ui/UIMetrics.gd")
 
 signal start_pressed
 signal how_to_play_pressed
@@ -26,7 +27,9 @@ func _ready() -> void:
 	$CenterContainer/Panel/MusicButton.pressed.connect(func() -> void:
 		AudioManager.handle_music_toggle_interaction()
 	)
-	$CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect.texture = _load_title_texture("res://assets/cat_ninja_tower_title_v2.png")
+	var title_art_rect: TextureRect = $CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect
+	title_art_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	title_art_rect.texture = _load_title_texture("res://assets/cat_ninja_tower_title_v2.png")
 	music_on_icon = _load_title_texture("res://assets/music_on.svg")
 	music_off_icon = _load_title_texture("res://assets/music_off.svg")
 	AudioManager.music_muted_changed.connect(_update_music_button_icon)
@@ -37,78 +40,144 @@ func _ready() -> void:
 
 func _apply_layout_scale() -> void:
 	var scale_factor: float = _get_mobile_scale()
+	var metrics: Dictionary = UI_METRICS.TITLE
 	var window_size: Vector2 = Vector2(get_window().size)
-	var outer_margin := 24.0 * scale_factor
-	var desired_panel_size := Vector2(580, 820) * scale_factor
+	var is_wide: bool = window_size.x / maxf(1.0, window_size.y) >= float(metrics["wide_breakpoint_ratio"])
+	var outer_margin := float(metrics["outer_margin"]) * scale_factor
+	var panel_base_size: Vector2 = (metrics["wide_panel_size"] as Vector2) if is_wide else (metrics["panel_size"] as Vector2)
+	var panel_min_size: Vector2 = (metrics["wide_panel_min"] as Vector2) if is_wide else (metrics["panel_min"] as Vector2)
+	var desired_panel_size: Vector2 = panel_base_size * scale_factor
 	var panel_size := Vector2(
-		minf(desired_panel_size.x, maxf(300.0 * scale_factor, window_size.x - outer_margin * 2.0)),
-		minf(desired_panel_size.y, maxf(420.0 * scale_factor, window_size.y - outer_margin * 2.0))
+		minf(desired_panel_size.x, maxf(panel_min_size.x * scale_factor, window_size.x - outer_margin * 2.0)),
+		minf(desired_panel_size.y, maxf(panel_min_size.y * scale_factor, window_size.y - outer_margin * 2.0))
 	)
 	var panel: Panel = $CenterContainer/Panel
 	panel.custom_minimum_size = panel_size
-	var panel_padding := minf(8.0 * scale_factor, panel_size.x * 0.025)
+	var panel_padding := minf(float(metrics["panel_padding"]) * scale_factor, panel_size.x * 0.025)
 	var music_button: Button = $CenterContainer/Panel/MusicButton
-	var music_button_size := minf(76.0 * scale_factor, panel_size.x * 0.16)
-	var music_button_inset := maxf(10.0 * scale_factor, panel_padding + 4.0 * scale_factor)
+	var music_button_size := minf(float(metrics["music_button_size"]) * scale_factor, panel_size.x * 0.14)
+	var music_button_inset := maxf(float(metrics["music_button_inset"]) * scale_factor, panel_padding + 4.0 * scale_factor)
 	music_button.custom_minimum_size = Vector2(music_button_size, music_button_size)
-	music_button.offset_left = -(music_button_inset + music_button_size)
-	music_button.offset_top = music_button_inset
-	music_button.offset_right = -music_button_inset
-	music_button.offset_bottom = music_button_inset + music_button_size
+	music_button.anchor_left = 0.0
+	music_button.anchor_top = 0.0
+	music_button.anchor_right = 0.0
+	music_button.anchor_bottom = 0.0
 	BUTTON_STYLES.apply_button_style(music_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
 
-	$CenterContainer/Panel/VBoxContainer.offset_left = panel_padding
-	$CenterContainer/Panel/VBoxContainer.offset_top = panel_padding
-	$CenterContainer/Panel/VBoxContainer.offset_right = panel_size.x - panel_padding
-	$CenterContainer/Panel/VBoxContainer.offset_bottom = panel_size.y - panel_padding
+	var content_root: Control = $CenterContainer/Panel/VBoxContainer
+	content_root.offset_left = panel_padding
+	content_root.offset_top = panel_padding
+	content_root.offset_right = panel_size.x - panel_padding
+	content_root.offset_bottom = panel_size.y - panel_padding
 
-	var art_size := Vector2(
-		maxf(220.0 * scale_factor, panel_size.x - panel_padding * 2.0),
-		minf(620.0 * scale_factor, panel_size.y * 0.66)
-	)
-	$CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect.custom_minimum_size = art_size
-	$CenterContainer/Panel/VBoxContainer/Spacer.custom_minimum_size = Vector2(0, 12) * scale_factor
-	$CenterContainer/Panel/VBoxContainer/ButtonArea.add_theme_constant_override("margin_left", int(round(minf(64.0 * scale_factor, panel_size.x * 0.12))))
-	$CenterContainer/Panel/VBoxContainer/ButtonArea.add_theme_constant_override("margin_right", int(round(minf(64.0 * scale_factor, panel_size.x * 0.12))))
-	$CenterContainer/Panel/VBoxContainer/ButtonArea.add_theme_constant_override("margin_top", int(round(10 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/ButtonArea.add_theme_constant_override("margin_bottom", int(round(10 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox.add_theme_constant_override("separation", int(round(14 * scale_factor)))
-	$CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/QuitGap.custom_minimum_size = Vector2(0, 18) * scale_factor
+	var art_center: CenterContainer = $CenterContainer/Panel/VBoxContainer/ArtCenter
+	var spacer: Control = $CenterContainer/Panel/VBoxContainer/Spacer
+	var button_area: MarginContainer = $CenterContainer/Panel/VBoxContainer/ButtonArea
+	var spacer_height := float(metrics["spacer_height"]) * scale_factor
+	var button_height := float(metrics["button_height"]) * scale_factor
+	var button_spacing := float(metrics["button_spacing"]) * scale_factor
+	var exit_gap := float(metrics["exit_gap"]) * scale_factor
+	var button_margin_top := float(metrics["button_margin_top"]) * scale_factor
+	var button_margin_bottom := float(metrics["button_margin_bottom"]) * scale_factor
+	var button_block_height := button_height * 3.0 + button_spacing * 2.0 + exit_gap + button_margin_top + button_margin_bottom
+	var button_margin_x := minf(float(metrics["button_margin_x"]) * scale_factor, panel_size.x * 0.12)
+	var buttons_vbox: VBoxContainer = $CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox
+	button_area.add_theme_constant_override("margin_left", int(round(button_margin_x)))
+	button_area.add_theme_constant_override("margin_right", int(round(button_margin_x)))
+	button_area.add_theme_constant_override("margin_top", int(round(button_margin_top)))
+	button_area.add_theme_constant_override("margin_bottom", int(round(button_margin_bottom)))
+	buttons_vbox.add_theme_constant_override("separation", int(round(button_spacing)))
+	$CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/QuitGap.custom_minimum_size = Vector2(0, exit_gap)
+
+	if is_wide:
+		var wide_gap := float(metrics["wide_gap"]) * scale_factor
+		var wide_music_gap := float(metrics["wide_music_gap"]) * scale_factor
+		var wide_column_top_padding := float(metrics["wide_column_top_padding"]) * scale_factor
+		var content_width := panel_size.x - panel_padding * 2.0
+		var content_height := panel_size.y - panel_padding * 2.0
+		var art_width := maxf(metrics["art_min_size"].x * scale_factor, content_width * float(metrics["wide_art_width_ratio"]))
+		var button_width := maxf(220.0 * scale_factor, content_width * float(metrics["wide_button_width_ratio"]))
+		if art_width + button_width + wide_gap > content_width:
+			var overflow := art_width + button_width + wide_gap - content_width
+			art_width = maxf(metrics["art_min_size"].x * scale_factor, art_width - overflow)
+		art_center.offset_left = 0.0
+		art_center.offset_top = 0.0
+		art_center.offset_right = art_width
+		art_center.offset_bottom = content_height
+		spacer.visible = false
+		spacer.offset_left = 0.0
+		spacer.offset_top = 0.0
+		spacer.offset_right = 0.0
+		spacer.offset_bottom = 0.0
+		var column_left := art_width + wide_gap
+		var column_right := content_width
+		var column_width := column_right - column_left
+		var reserved_music_height := music_button_size + wide_music_gap
+		var button_area_height := button_block_height
+		var button_area_top := maxf(
+			reserved_music_height + wide_column_top_padding,
+			(content_height - button_area_height) * 0.5
+		)
+		button_area.offset_left = column_left
+		button_area.offset_top = button_area_top
+		button_area.offset_right = column_right
+		button_area.offset_bottom = minf(content_height, button_area_top + button_area_height)
+		music_button.offset_left = panel_padding + column_right - music_button_size
+		music_button.offset_top = panel_padding + wide_column_top_padding
+		music_button.offset_right = panel_padding + column_right
+		music_button.offset_bottom = panel_padding + wide_column_top_padding + music_button_size
+		var art_size := Vector2(
+			art_width,
+			minf(float(metrics["art_max_height"]) * scale_factor, content_height)
+		)
+		$CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect.custom_minimum_size = art_size
+	else:
+		var available_art_height := maxf(160.0 * scale_factor, panel_size.y - panel_padding * 2.0 - spacer_height - button_block_height)
+		var art_size := Vector2(
+			maxf(metrics["art_min_size"].x * scale_factor, panel_size.x - panel_padding * 2.0),
+			minf(float(metrics["art_max_height"]) * scale_factor, minf(panel_size.y * float(metrics["art_height_ratio"]), available_art_height))
+		)
+		art_center.offset_left = 0.0
+		art_center.offset_top = 0.0
+		art_center.offset_right = panel_size.x - panel_padding * 2.0
+		art_center.offset_bottom = art_size.y
+		spacer.visible = true
+		spacer.offset_left = 0.0
+		spacer.offset_top = art_size.y
+		spacer.offset_right = panel_size.x - panel_padding * 2.0
+		spacer.offset_bottom = art_size.y + spacer_height
+		button_area.offset_left = 0.0
+		button_area.offset_top = art_size.y + spacer_height
+		button_area.offset_right = panel_size.x - panel_padding * 2.0
+		button_area.offset_bottom = panel_size.y - panel_padding * 2.0
+		music_button.offset_left = panel_size.x - music_button_inset - music_button_size
+		music_button.offset_top = music_button_inset
+		music_button.offset_right = panel_size.x - music_button_inset
+		music_button.offset_bottom = music_button_inset + music_button_size
+		$CenterContainer/Panel/VBoxContainer/ArtCenter/TitleArtRect.custom_minimum_size = art_size
 
 	for button_path in [
 		"CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/StartButton",
 	]:
 		var button: Button = get_node(button_path) as Button
-		button.custom_minimum_size = Vector2(0, 54) * scale_factor
-		button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+		button.custom_minimum_size = Vector2(0, float(metrics["button_height"])) * scale_factor
+		button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 		BUTTON_STYLES.apply_button_style(button, scale_factor, BUTTON_STYLES.ROLE_PRIMARY)
 
 	var how_to_play_button: Button = $CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/HowToPlayButton
-	how_to_play_button.custom_minimum_size = Vector2(0, 54) * scale_factor
-	how_to_play_button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	how_to_play_button.custom_minimum_size = Vector2(0, float(metrics["button_height"])) * scale_factor
+	how_to_play_button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 	BUTTON_STYLES.apply_button_style(how_to_play_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
 
 	var quit_button: Button = $CenterContainer/Panel/VBoxContainer/ButtonArea/ButtonsVBox/QuitButton
-	quit_button.custom_minimum_size = Vector2(0, 54) * scale_factor
-	quit_button.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	quit_button.custom_minimum_size = Vector2(0, float(metrics["button_height"])) * scale_factor
+	quit_button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 	BUTTON_STYLES.apply_button_style(quit_button, scale_factor, BUTTON_STYLES.ROLE_EXIT)
 	_update_music_button_icon(AudioManager.is_music_muted())
 
 
 func _get_mobile_scale() -> float:
-	var window_size: Vector2i = get_window().size
-	var width: float = float(window_size.x)
-	var height: float = float(window_size.y)
-	if width <= 0.0 or height <= 0.0:
-		return 1.0
-	var base_width: float = float(ProjectSettings.get_setting("display/window/size/viewport_width"))
-	var base_height: float = float(ProjectSettings.get_setting("display/window/size/viewport_height"))
-	var width_scale: float = base_width / width
-	var height_scale: float = base_height / height
-	var base_scale: float = maxf(1.0, maxf(width_scale, height_scale))
-	if height > width:
-		base_scale *= 1.25
-	return clampf(base_scale * 2.0, 2.0, 9.0)
+	return UI_METRICS.get_menu_scale(get_window().size)
 
 
 func _load_title_texture(path: String) -> Texture2D:

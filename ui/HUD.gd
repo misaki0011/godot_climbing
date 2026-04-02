@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 const BUTTON_STYLES := preload("res://ui/ButtonStyles.gd")
+const UI_METRICS := preload("res://ui/UIMetrics.gd")
 var debug_button_enabled: bool = false
 
 signal debug_skip_pressed
@@ -33,45 +34,34 @@ func set_pause_state(is_paused: bool) -> void:
 
 func _apply_layout_scale() -> void:
 	var scale_factor: float = _get_mobile_scale()
+	var metrics: Dictionary = UI_METRICS.HUD
 	var margin: MarginContainer = $MarginContainer
-	margin.offset_left = 24.0 * scale_factor
-	margin.offset_top = 20.0 * scale_factor
-	margin.offset_right = 440.0 * scale_factor
-	margin.offset_bottom = 180.0 * scale_factor
+	margin.offset_left = float(metrics["margin_left"]) * scale_factor
+	margin.offset_top = float(metrics["margin_top"]) * scale_factor
+	margin.offset_right = float(metrics["margin_right"]) * scale_factor
+	margin.offset_bottom = float(metrics["margin_bottom"]) * scale_factor
 
-	$MarginContainer/VBoxContainer/StageLabel.add_theme_font_size_override("font_size", int(round(24 * scale_factor)))
-	$MarginContainer/VBoxContainer/TimerLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-	$MarginContainer/VBoxContainer/TargetLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
-	$MarginContainer/VBoxContainer/DeathsLabel.add_theme_font_size_override("font_size", int(round(20 * scale_factor)))
+	$MarginContainer/VBoxContainer/StageLabel.add_theme_font_size_override("font_size", int(round(float(metrics["title_font_size"]) * scale_factor)))
+	$MarginContainer/VBoxContainer/TimerLabel.add_theme_font_size_override("font_size", int(round(float(metrics["body_font_size"]) * scale_factor)))
+	$MarginContainer/VBoxContainer/TargetLabel.add_theme_font_size_override("font_size", int(round(float(metrics["body_font_size"]) * scale_factor)))
+	$MarginContainer/VBoxContainer/DeathsLabel.add_theme_font_size_override("font_size", int(round(float(metrics["body_font_size"]) * scale_factor)))
 
 	var skip_button: Button = $DebugSkipButton
-	skip_button.offset_left = -228.0 * scale_factor
-	skip_button.offset_top = 20.0 * scale_factor
-	skip_button.offset_right = -24.0 * scale_factor
-	skip_button.offset_bottom = 82.0 * scale_factor
-	skip_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	skip_button.offset_left = float(metrics["debug_left"]) * scale_factor
+	skip_button.offset_top = float(metrics["debug_top"]) * scale_factor
+	skip_button.offset_right = float(metrics["debug_right"]) * scale_factor
+	skip_button.offset_bottom = float(metrics["debug_bottom"]) * scale_factor
+	skip_button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 	BUTTON_STYLES.apply_button_style(skip_button, scale_factor, BUTTON_STYLES.ROLE_DEBUG)
 
 	var pause_button: Button = $PauseButton
-	pause_button.offset_left = 24.0 * scale_factor
-	pause_button.offset_top = -150.0 * scale_factor
-	pause_button.offset_right = 228.0 * scale_factor
-	pause_button.offset_bottom = -88.0 * scale_factor
-	pause_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	pause_button.offset_left = float(metrics["pause_left"]) * scale_factor
+	pause_button.offset_top = float(metrics["pause_top"]) * scale_factor
+	pause_button.offset_right = float(metrics["pause_right"]) * scale_factor
+	pause_button.offset_bottom = float(metrics["pause_bottom"]) * scale_factor
+	pause_button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 	BUTTON_STYLES.apply_button_style(pause_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
 
 
 func _get_mobile_scale() -> float:
-	var window_size: Vector2i = get_window().size
-	var width: float = float(window_size.x)
-	var height: float = float(window_size.y)
-	if width <= 0.0 or height <= 0.0:
-		return 1.0
-	var base_width: float = float(ProjectSettings.get_setting("display/window/size/viewport_width"))
-	var base_height: float = float(ProjectSettings.get_setting("display/window/size/viewport_height"))
-	var width_scale: float = base_width / width
-	var height_scale: float = base_height / height
-	var base_scale: float = maxf(1.0, maxf(width_scale, height_scale))
-	if height > width:
-		base_scale *= 1.25
-	return clampf(base_scale * 2.0, 2.0, 9.0)
+	return UI_METRICS.get_ui_scale(get_window().size)

@@ -1,6 +1,7 @@
 extends Control
 
 const BUTTON_STYLES := preload("res://ui/ButtonStyles.gd")
+const UI_METRICS := preload("res://ui/UIMetrics.gd")
 
 signal restart_pressed
 signal level_select_pressed
@@ -37,61 +38,50 @@ func _ready() -> void:
 
 func _apply_layout_scale() -> void:
 	var scale_factor: float = _get_mobile_scale()
+	var metrics: Dictionary = UI_METRICS.PAUSE_MENU
 	var panel: Panel = $Panel
-	panel.custom_minimum_size = Vector2(204, 214) * scale_factor
-	panel.offset_left = 24.0 * scale_factor
-	panel.offset_top = -302.0 * scale_factor
-	panel.offset_right = 228.0 * scale_factor
-	panel.offset_bottom = -88.0 * scale_factor
+	panel.custom_minimum_size = metrics["panel_size"] * scale_factor
+	panel.offset_left = float(metrics["panel_left"]) * scale_factor
+	panel.offset_top = float(metrics["panel_top"]) * scale_factor
+	panel.offset_right = float(metrics["panel_right"]) * scale_factor
+	panel.offset_bottom = float(metrics["panel_bottom"]) * scale_factor
 
 	var box: VBoxContainer = $Panel/VBoxContainer
 	box.offset_left = 0.0
 	box.offset_top = 0.0
 	box.offset_right = 0.0
 	box.offset_bottom = 0.0
-	box.add_theme_constant_override("separation", int(round(10 * scale_factor)))
-	$Panel/VBoxContainer/TopRow.add_theme_constant_override("separation", int(round(10 * scale_factor)))
+	box.add_theme_constant_override("separation", int(round(float(metrics["content_spacing"]) * scale_factor)))
+	$Panel/VBoxContainer/TopRow.add_theme_constant_override("separation", int(round(float(metrics["content_spacing"]) * scale_factor)))
 
-	$Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(28 * scale_factor)))
-	$Panel/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, 18) * scale_factor
+	$Panel/VBoxContainer/TitleLabel.add_theme_font_size_override("font_size", int(round(float(metrics["title_font_size"]) * scale_factor)))
+	$Panel/VBoxContainer/BackGap.custom_minimum_size = Vector2(0, float(metrics["back_gap"])) * scale_factor
 	var top_row: HBoxContainer = $Panel/VBoxContainer/TopRow
-	top_row.custom_minimum_size = Vector2(204, 62) * scale_factor
+	top_row.custom_minimum_size = metrics["top_row_size"] * scale_factor
 
 	var resume_button: Button = $Panel/VBoxContainer/ResumeButton
-	resume_button.custom_minimum_size = Vector2(204, 62) * scale_factor
-	resume_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	resume_button.custom_minimum_size = metrics["resume_button_size"] * scale_factor
+	resume_button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 	BUTTON_STYLES.apply_button_style(resume_button, scale_factor, BUTTON_STYLES.ROLE_PRIMARY)
 
 	var restart_button: Button = $Panel/VBoxContainer/TopRow/RestartButton
-	restart_button.custom_minimum_size = Vector2(130, 62) * scale_factor
-	restart_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	restart_button.custom_minimum_size = metrics["restart_button_size"] * scale_factor
+	restart_button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 	BUTTON_STYLES.apply_button_style(restart_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
 
 	var music_button: Button = $Panel/VBoxContainer/TopRow/MusicButton
-	music_button.custom_minimum_size = Vector2(64, 62) * scale_factor
+	music_button.custom_minimum_size = metrics["music_button_size"] * scale_factor
 	BUTTON_STYLES.apply_button_style(music_button, scale_factor, BUTTON_STYLES.ROLE_UTILITY)
 
 	var back_button: Button = $Panel/VBoxContainer/BackButton
-	back_button.custom_minimum_size = Vector2(204, 62) * scale_factor
-	back_button.add_theme_font_size_override("font_size", int(round(18 * scale_factor)))
+	back_button.custom_minimum_size = metrics["back_button_size"] * scale_factor
+	back_button.add_theme_font_size_override("font_size", int(round(float(metrics["button_font_size"]) * scale_factor)))
 	BUTTON_STYLES.apply_button_style(back_button, scale_factor, BUTTON_STYLES.ROLE_EXIT)
 	_update_music_button_icon(AudioManager.is_music_muted())
 
 
 func _get_mobile_scale() -> float:
-	var window_size: Vector2i = get_window().size
-	var width: float = float(window_size.x)
-	var height: float = float(window_size.y)
-	if width <= 0.0 or height <= 0.0:
-		return 1.0
-	var base_width: float = float(ProjectSettings.get_setting("display/window/size/viewport_width"))
-	var base_height: float = float(ProjectSettings.get_setting("display/window/size/viewport_height"))
-	var width_scale: float = base_width / width
-	var height_scale: float = base_height / height
-	var base_scale: float = maxf(1.0, maxf(width_scale, height_scale))
-	if height > width:
-		base_scale *= 1.25
-	return clampf(base_scale * 2.0, 2.0, 9.0)
+	return UI_METRICS.get_ui_scale(get_window().size)
 
 
 func _load_ui_texture(path: String) -> Texture2D:
