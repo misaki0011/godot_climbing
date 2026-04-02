@@ -11,6 +11,9 @@ var elapsed_time := 0.0
 var running := false
 var stage_name := ""
 var target_time_seconds := 0.0
+var clear_reward_amount := 1.0
+var death_penalty_amount := 0.0
+var speed_bonus_amount := 0.0
 
 
 func _ready() -> void:
@@ -24,7 +27,7 @@ func _process(delta: float) -> void:
 	_emit_hud_update()
 
 
-func setup_level(level_root: Node, player_ref: Node, level_stage_name: String, spawn_position: Vector2, target_time: float) -> void:
+func setup_level(level_root: Node, player_ref: Node, level_stage_name: String, spawn_position: Vector2, target_time: float, clear_reward: float, death_penalty: float, speed_bonus: float) -> void:
 	current_level = level_root
 	player = player_ref
 	stage_name = level_stage_name
@@ -32,6 +35,9 @@ func setup_level(level_root: Node, player_ref: Node, level_stage_name: String, s
 	death_count = 0
 	elapsed_time = 0.0
 	target_time_seconds = target_time
+	clear_reward_amount = clear_reward
+	death_penalty_amount = death_penalty
+	speed_bonus_amount = speed_bonus
 	running = true
 	_emit_hud_update()
 
@@ -55,18 +61,19 @@ func complete_level() -> void:
 		return
 	running = false
 	AudioManager.play_sfx("clear")
-	var speed_bonus := 0.3 if elapsed_time <= target_time_seconds else 0.0
-	var stage_reward := maxf(0.0, 1.0 - death_count * 0.2 + speed_bonus)
+	var speed_bonus := speed_bonus_amount if elapsed_time <= target_time_seconds else 0.0
+	var death_penalty := death_count * death_penalty_amount
+	var stage_reward := maxf(0.0, clear_reward_amount - death_penalty + speed_bonus)
 	stage_cleared.emit({
 		"stage_name": stage_name,
 		"time_text": get_time_text(),
 		"deaths": death_count,
-		"death_penalty": snappedf(death_count * 0.2, 0.1),
-		"clear_reward": 1.0,
+		"death_penalty": snappedf(death_penalty, 0.01),
+		"clear_reward": snappedf(clear_reward_amount, 0.01),
 		"speed_bonus": speed_bonus,
 		"target_time_text": _format_time_text(target_time_seconds),
 		"reached_target": elapsed_time <= target_time_seconds,
-		"stage_reward": snappedf(stage_reward, 0.1),
+		"stage_reward": snappedf(stage_reward, 0.01),
 	})
 
 

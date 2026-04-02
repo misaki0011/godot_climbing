@@ -29,12 +29,12 @@ func set_results(
 	speed_bonus: float
 ) -> void:
 	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TitleLabel.text = "Tower Cleared" if is_final_level else "%s Clear" % stage_name
-	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/RewardLabel.text = "Reward: %.1f gems" % stage_reward
-	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/ClearRewardLabel.text = "+%.1f" % clear_reward
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/RewardLabel.text = "Reward: %.2f gems" % stage_reward
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/ClearRewardLabel.text = "+%.2f" % clear_reward
 	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyLabel.text = "Deaths x%d" % deaths
-	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyValueLabel.text = "-%.1f" % death_penalty
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/DeathsPenaltyValueLabel.text = "-%.2f" % death_penalty
 	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusLabel.text = "Time %s/%s" % [time_text, target_time_text]
-	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusValueLabel.text = "+%.1f" % speed_bonus
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/BreakdownGrid/TimeBonusValueLabel.text = "+%.2f" % speed_bonus
 	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/NextButton.disabled = is_final_level
 
 

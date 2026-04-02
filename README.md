@@ -8,7 +8,7 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - Climb upward one step at a time while flying hazards sweep across the tower.
 - Reach the gem at the top as fast as you can with as few deaths as possible.
 - Clear stages based on Tokyo Tower, Skytree, and Burj Khalifa.
-- Earn gems from each stage through clear reward, low deaths, and target-time bonus.
+- Earn gems from each stage through a tower-height-based clear reward, low deaths, and target-time bonus.
 
 ## Current Behavior
 
@@ -32,7 +32,7 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - Touching any hazard increments deaths and respawns the player at the base quickly.
 - Moving hazards do not start inside the lower-left HUD-safe zone near the `PAUSE` / `RESUME` control, so gameplay objects stay clearer around that button.
 - Touching the goal at the top ends the stage and transitions away from gameplay to a separate stage clear page.
-- The stage clear page shows the stage name, gem reward, and a compact three-line reward breakdown for `Clear`, `Deaths xN`, and `Time current/target`.
+- The stage clear page shows the stage name, gem reward, and a compact three-line reward breakdown for tower-height clear reward, `Deaths xN`, and `Time current/target`.
 - The stage clear page always shows `Next`, `Restart`, and `Back` in that order, and unavailable actions are disabled instead of being hidden or renamed.
 - `Esc` pauses and opens a bottom-left pause menu above the HUD button.
 - `R` retries the current stage immediately.
@@ -48,7 +48,7 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - The pause and result screens follow one placement rule: forward action first, utility action next, and exit action last.
 - Buttons now use a consistent role/state color system: bright blue for primary forward actions like `Start`, `Next`, and playable level buttons; a darker exit color for `Back` and `Quit`; a lighter support-blue utility color for `How To Play`, `Restart`, `PAUSE`, and `RESUME`; a flatter dark disabled style that can override any button when unavailable; and a separate debug color for development-only actions like `DEBUG SKIP`.
 - Menu panels and their inner content are centered on screen, and the component layout stays centered as screens get narrower instead of drifting toward one side.
-- The level selection screen shows a right-aligned total-gem row with a gem icon plus a per-stage gem value in a simple two-column list without target times.
+- The level selection screen shows a right-aligned total-gem row with a gem icon plus a per-stage gem value in a simple two-column list without target times, now using two decimal places.
 - The level selection screen also shows `Level 4 - Coming Soon` as a visible non-playable row so the next stage is visible before it is implemented.
 - Menus and HUD controls use a shared adaptive scaling system so portrait phones stay large and readable while desktop and horizontal screens relax into a less oversized layout.
 - Menu-style screens such as the title, how-to-play, level select, and result pages keep a slightly stronger scale than gameplay HUD overlays, so menus still feel bold on wide screens without overwhelming gameplay UI.
@@ -68,11 +68,14 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 
 ## Rewards
 
-- Clearing a stage grants a base reward of `1.0` gem.
-- Each death subtracts `0.2` gems from that stage reward.
-- Finishing at or under the stage target time grants an extra `0.3` gems.
+- Clearing a stage grants a base reward derived from the real tower height in hundreds of meters:
+  - `Level01` Tokyo Tower: `3.33` gems
+  - `Level02` Tokyo Skytree: `6.34` gems
+  - `Level03` Burj Khalifa: `8.28` gems
+- Each death subtracts a flat `0.6` gems from that stage reward.
+- Finishing at or under the stage target time grants a flat `0.9` gem bonus.
 - Stage reward is clamped to a minimum of `0.0` gems.
-- The selection screen shows the total gems as the sum of the best reward earned on each stage so far during the current run, plus the best gem reward per stage.
+- The selection screen shows the total gems as the sum of the best reward earned on each stage so far during the current run, plus the best gem reward per stage, with values shown to two decimal places.
 
 ## Player Movement
 
@@ -124,6 +127,7 @@ Design rules for future stages:
 - `levels/Level01.tscn`: Tokyo Tower climb stage with the spawn aligned to the tower base and the goal near the top
 - `levels/Level02.tscn`: Skytree climb stage with a taller skyline silhouette, faster hazard sweeps, and upper hazards that now reach closer to the tower tip
 - `levels/Level03.tscn`: Burj Khalifa climb stage with the tallest camera range, the fastest hazard routes, and upper hazards distributed much closer to the top of the tower
+- `data/LevelCatalog.gd`: Shared level metadata catalog for scene path, display name, target time, clear reward, death penalty, and speed bonus
 
 ## Managers
 
@@ -172,7 +176,9 @@ Current sound hook events:
 - There is no persistent save system.
 - Legacy platformer scenes from the previous prototype still exist in the repository but are not used by `Level01`.
 - The project is intended to open directly in Godot 4.5 and run from `Main.tscn`.
-- For Godot web-specific implementation tips and browser pitfalls, refer to `docs/godot_web_tips.md`.
+- For reusable game UI conventions, refer to `project_docs/ui_rules.md`.
+- For Godot web-specific implementation tips and browser pitfalls, refer to `project_docs/godot_web_tips.md`.
+- For reusable next-project planning and UI/process lessons, refer to `project_docs/new_game_checklist.md`.
 
 ## Build
 

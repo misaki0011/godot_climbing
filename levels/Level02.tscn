@@ -6,7 +6,7 @@
 
 [node name="Level02" type="Node2D"]
 script = ExtResource("1")
-stage_name = "Level 2 - Skytree Sprint"
+stage_name = "Level 2 - Tokyo Skytree"
 camera_bounds = Rect2(0, -920, 1280, 3860)
 backdrop_texture_path = "res://assets/skytree_tp.png"
 goal_offset = Vector2(0, 20)

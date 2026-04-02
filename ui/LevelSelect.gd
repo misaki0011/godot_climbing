@@ -138,7 +138,7 @@ func _apply_unlocked_levels() -> void:
 
 
 func _apply_total_gems() -> void:
-	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TotalGemRow/TotalGemValueLabel.text = "%.1f" % pending_total_gems
+	$CenterContainer/Panel/MarginContainer/InnerCenter/VBoxContainer/TotalGemRow/TotalGemValueLabel.text = "%.2f" % pending_total_gems
 
 
 func _apply_level_rewards() -> void:
@@ -155,7 +155,7 @@ func _apply_level_rewards() -> void:
 		var reward_value := GameManager.get_stage_reward(level_index)
 		if level_index < pending_level_rewards.size():
 			reward_value = maxf(reward_value, float(pending_level_rewards[level_index]))
-		reward_labels[level_index].text = "%.1f" % reward_value
+		reward_labels[level_index].text = "%.2f" % reward_value
 
 
 func _get_mobile_scale() -> float:

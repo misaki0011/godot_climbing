@@ -132,7 +132,10 @@ func _start_level(level_index: int) -> void:
 		current_player,
 		current_level.get_stage_name(),
 		current_level.get_spawn_position(),
-		GameManager.get_level_target_time(level_index)
+		GameManager.get_level_target_time(level_index),
+		GameManager.get_level_clear_reward(level_index),
+		GameManager.get_level_death_penalty(level_index),
+		GameManager.get_level_speed_bonus(level_index)
 	)
 	var goal := current_level.get_node_or_null("Goal")
 	if goal != null and goal.has_method("arm"):

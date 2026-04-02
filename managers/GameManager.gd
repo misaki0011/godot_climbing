@@ -2,34 +2,23 @@ extends Node
 
 signal route_changed(route: String, level_index: int)
 
+const LEVEL_CATALOG := preload("res://data/LevelCatalog.gd")
+
 const TITLE := "title"
 const HOW_TO_PLAY := "how_to_play"
 const LEVEL_SELECT := "level_select"
 const STAGE := "stage"
 const STAGE_CLEAR := "stage_clear"
 
-const LEVEL_SCENES := [
-	"res://levels/Level01.tscn",
-	"res://levels/Level02.tscn",
-	"res://levels/Level03.tscn",
-]
-
-const LEVEL_NAMES := [
-	"Level 1 - Tokyo Tower",
-	"Level 2 - Skytree Sprint",
-	"Level 3 - Burj Khalifa",
-]
-
-const LEVEL_TARGET_TIMES := [
-	45.0,
-	60.0,
-	80.0,
-]
-
 var current_level_index := -1
 var unlocked_levels := 1
 var last_stage_stats: Dictionary = {}
-var stage_rewards := [0.0, 0.0, 0.0]
+var stage_rewards := []
+
+
+func _ready() -> void:
+	stage_rewards.resize(LEVEL_CATALOG.get_level_count())
+	stage_rewards.fill(0.0)
 
 
 func show_title() -> void:
@@ -48,7 +37,7 @@ func show_level_select() -> void:
 
 
 func start_level(level_index: int) -> void:
-	if level_index < 0 or level_index >= LEVEL_SCENES.size():
+	if level_index < 0 or level_index >= LEVEL_CATALOG.get_level_count():
 		return
 	current_level_index = level_index
 	route_changed.emit(STAGE, level_index)
@@ -67,40 +56,52 @@ func show_stage_clear(stats: Dictionary) -> void:
 func complete_current_level() -> void:
 	if current_level_index < 0:
 		return
-	unlocked_levels = min(max(unlocked_levels, current_level_index + 2), LEVEL_SCENES.size())
+	unlocked_levels = min(max(unlocked_levels, current_level_index + 2), LEVEL_CATALOG.get_level_count())
 
 
 func next_level() -> bool:
 	var next_index := current_level_index + 1
-	if next_index >= LEVEL_SCENES.size():
+	if next_index >= LEVEL_CATALOG.get_level_count():
 		return false
 	start_level(next_index)
 	return true
 
 
 func get_level_scene(level_index: int) -> String:
-	return LEVEL_SCENES[level_index]
+	return LEVEL_CATALOG.get_scene_path(level_index)
 
 
 func get_level_name(level_index: int) -> String:
-	return LEVEL_NAMES[level_index]
+	return LEVEL_CATALOG.get_level_name(level_index)
 
 
 func is_final_level(level_index: int) -> bool:
-	return level_index == LEVEL_SCENES.size() - 1
+	return level_index == LEVEL_CATALOG.get_level_count() - 1
 
 
 func get_level_target_time(level_index: int) -> float:
-	return LEVEL_TARGET_TIMES[level_index]
+	return LEVEL_CATALOG.get_target_time(level_index)
+
+
+func get_level_clear_reward(level_index: int) -> float:
+	return LEVEL_CATALOG.get_clear_reward(level_index)
+
+
+func get_level_death_penalty(level_index: int) -> float:
+	return LEVEL_CATALOG.get_death_penalty(level_index)
+
+
+func get_level_speed_bonus(level_index: int) -> float:
+	return LEVEL_CATALOG.get_speed_bonus(level_index)
 
 
 func get_level_target_time_text(level_index: int) -> String:
-	return _format_time_text(LEVEL_TARGET_TIMES[level_index])
+	return _format_time_text(LEVEL_CATALOG.get_target_time(level_index))
 
 
 func get_all_target_time_texts() -> Array[String]:
 	var target_texts: Array[String] = []
-	for level_index in LEVEL_TARGET_TIMES.size():
+	for level_index in LEVEL_CATALOG.get_level_count():
 		target_texts.append(get_level_target_time_text(level_index))
 	return target_texts
 
@@ -115,7 +116,7 @@ func get_total_gems() -> float:
 	var total := 0.0
 	for reward in stage_rewards:
 		total += reward
-	return snappedf(total, 0.1)
+	return snappedf(total, 0.01)
 
 
 func get_stage_rewards() -> Array[float]:
