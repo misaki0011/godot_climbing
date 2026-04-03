@@ -23,7 +23,7 @@ Godot 4 2D single-player tower-climb timing game where the player climbs a singl
 - `Start` opens a stage select screen for `Level01`, `Level02`, and `Level03`.
 - `Level01` is a Tokyo Tower climb, `Level02` is a Skytree climb, and `Level03` is a Burj Khalifa climb.
 - Each level spawns the player at the base of one central ladder and starts the stage timer.
-- Each tower backdrop is anchored so its bottom touches the spawn ground line at original scale, the stage hazards shift with that tower alignment, the camera top extends high enough to show the full tower, and each goal is anchored to the top of its tower image.
+- Each tower backdrop is assigned directly as a scene texture resource, anchored so its bottom touches the spawn ground line at original scale, the stage hazards shift with that tower alignment, the camera top extends high enough to show the full tower, and each goal is anchored to the top of its tower image.
 - During gameplay, the HUD shows both the current timer and the stage target time so players can compare their pace live.
 - Pressing `Space` moves the player upward by one fixed ladder step.
 - On desktop, `Space` stays dedicated to climbing and does not toggle HUD buttons even after they are clicked.

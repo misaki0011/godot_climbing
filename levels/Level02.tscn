@@ -1,14 +1,15 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/BaseLevel.gd" id="1"]
 [ext_resource type="PackedScene" path="res://objects/MovingHazard.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://objects/Goal.tscn" id="3"]
+[ext_resource type="Texture2D" path="res://assets/skytree_tp.png" id="4"]
 
 [node name="Level02" type="Node2D"]
 script = ExtResource("1")
 stage_name = "Level 2 - Tokyo Skytree"
 camera_bounds = Rect2(0, -920, 1280, 3860)
-backdrop_texture_path = "res://assets/skytree_tp.png"
+backdrop_texture = ExtResource("4")
 goal_offset = Vector2(0, 20)
 
 [node name="TowerBackdrop" type="Sprite2D" parent="."]
